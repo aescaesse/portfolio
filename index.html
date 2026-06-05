@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>aescaesse | Digital Craft</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="antialiased">
+
+    <div id="project-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-12 opacity-0 pointer-events-none bg-white">
+        <div class="relative w-full h-full max-w-7xl mx-auto flex flex-col border border-black">
+            <div class="flex justify-between items-end p-6 border-b border-black">
+                <div>
+                    <h2 id="modal-title" class="font-serif text-3xl md:text-5xl tracking-tight mb-2"></h2>
+                    <p id="modal-desc" class="font-sans text-sm md:text-base text-gray-700 max-w-xl uppercase tracking-widest"></p>
+                </div>
+                <button id="close-modal" class="font-sans text-xs uppercase tracking-widest hover:text-skyblue transition-colors duration-300 pb-1">
+                    [ Close ]
+                </button>
+            </div>
+            <div class="flex-grow w-full h-full bg-white relative">
+                <iframe id="modal-iframe" src="" class="absolute inset-0 w-full h-full border-none" title="Project Preview"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <nav class="fixed top-0 w-full p-6 md:p-12 z-40 flex justify-between items-center mix-blend-difference text-white">
+        <div class="font-sans text-xs uppercase tracking-[0.2em]">aescaesse</div>
+        <div class="font-sans text-xs uppercase tracking-[0.2em] hidden md:block">Digital Craft</div>
+    </nav>
+
+    <main>
+        <section class="min-h-screen flex flex-col items-center justify-center relative px-6">
+            <h1 class="font-serif text-6xl md:text-8xl lg:text-[10rem] leading-none tracking-tighter text-center">
+                <span class="reveal-wrapper"><span class="reveal-text hero-text">aescaesse</span></span>
+            </h1>
+            <div class="mt-8 font-sans text-xs md:text-sm uppercase tracking-[0.3em] text-center">
+                <span class="reveal-wrapper"><span class="reveal-text hero-text">Timeless Elegance in Digital Space</span></span>
+            </div>
+            
+            <div class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4">
+                <span class="font-sans text-[0.6rem] uppercase tracking-widest">Scroll</span>
+                <div class="w-[1px] h-12 bg-black overflow-hidden relative">
+                    <div class="scroll-line absolute top-0 left-0 w-full h-full bg-skyblue -translate-y-full"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-32 md:py-48 px-6 md:px-12 max-w-5xl mx-auto">
+            <h2 class="font-serif text-4xl md:text-6xl mb-16 border-b border-black pb-8">
+                <span class="reveal-wrapper"><span class="reveal-text scroll-reveal">Offerings.</span></span>
+            </h2>
+            <ul class="flex flex-col gap-12 font-serif text-3xl md:text-5xl text-black">
+                <li class="reveal-wrapper"><span class="reveal-text scroll-reveal hover:text-skyblue transition-colors duration-500 cursor-default">Portfolios</span></li>
+                <li class="reveal-wrapper"><span class="reveal-text scroll-reveal hover:text-skyblue transition-colors duration-500 cursor-default">V-Cards</span></li>
+                <li class="reveal-wrapper"><span class="reveal-text scroll-reveal hover:text-skyblue transition-colors duration-500 cursor-default">Gastronomy</span></li>
+            </ul>
+        </section>
+
+        <section class="py-32 md:py-48 px-6 md:px-12 max-w-7xl mx-auto min-h-screen">
+            <h2 class="font-serif text-4xl md:text-6xl mb-24 border-b border-black pb-8">
+                <span class="reveal-wrapper"><span class="reveal-text scroll-reveal">Selected Works.</span></span>
+            </h2>
+            
+            <div id="works-container" class="flex flex-col border-t border-black">
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-24 px-6 md:px-12 border-t border-black flex flex-col md:flex-row justify-between items-start md:items-end gap-12 max-w-7xl mx-auto">
+        <div>
+            <h3 class="font-serif text-3xl mb-4">Let us craft something timeless.</h3>
+            <a href="mailto:contact@aescaesse.com" class="font-sans text-sm uppercase tracking-widest hover:text-skyblue transition-colors duration-300">contact@aescaesse.com</a>
+        </div>
+        <div class="flex gap-8 font-sans text-xs uppercase tracking-[0.2em]">
+            <a href="#" class="hover:text-skyblue transition-colors duration-300">Instagram</a>
+            <a href="#" class="hover:text-skyblue transition-colors duration-300">LinkedIn</a>
+            <a href="#" class="hover:text-skyblue transition-colors duration-300">X</a>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

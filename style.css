@@ -1,0 +1,32 @@
+/* style.css */
+::selection {
+    background-color: #87CEEB;
+    color: #000000;
+}
+
+body {
+    background-color: #FFFFFF;
+    color: #000000;
+    overflow-x: hidden;
+}
+
+.reveal-wrapper {
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.reveal-text {
+    transform: translateY(110%);
+    display: inline-block;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #FFFFFF;
+}
+::-webkit-scrollbar-thumb {
+    background: #000000;
+}

@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
             id: 1, 
             title: 'L’Atelier', 
             description: 'A bespoke digital portfolio for high-fashion editorial curation.', 
-            iframeURL: 'https://en.wikipedia.org/wiki/High_fashion'
+            iframeURL: 'https://aescaesse.github.io/hipnotizingsky/'
         },
         { 
             id: 2, 

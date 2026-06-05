@@ -22,7 +22,7 @@ const projects = [
         id: 1, 
         title: 'L’Atelier', 
         description: 'A bespoke digital portfolio for high-fashion editorial curation.', 
-        iframeURL: 'https://example.com' 
+        iframeURL: 'https://google.com 
     },
     { 
         id: 2, 

@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
             title: 'Obscura', 
             description: 'A stark, high-contrast gallery for architectural photography.', 
             iframeURL: 'https://en.wikipedia.org/wiki/Architectural_photography' 
-       */ }
+      } */ 
     ];
 
     const worksContainer = document.getElementById('works-container');

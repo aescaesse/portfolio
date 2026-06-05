@@ -10,29 +10,46 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        black: '#000000',
+                        offwhite: '#F4F4F0',
+                        skyblue: '#87CEEB',
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
     
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="antialiased">
+<body class="antialiased bg-offwhite text-black">
 
-    <div id="project-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-12 opacity-0 pointer-events-none bg-white">
-        <div class="relative w-full h-full max-w-7xl mx-auto flex flex-col border border-black">
+    <div id="project-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-12 opacity-0 pointer-events-none bg-offwhite/95 backdrop-blur-sm">
+        <div class="relative w-full h-full max-w-7xl mx-auto flex flex-col border border-black bg-offwhite shadow-2xl">
             <div class="flex justify-between items-end p-6 border-b border-black">
                 <div>
                     <h2 id="modal-title" class="font-serif text-3xl md:text-5xl tracking-tight mb-2"></h2>
                     <p id="modal-desc" class="font-sans text-sm md:text-base text-gray-700 max-w-xl uppercase tracking-widest"></p>
                 </div>
-                <button id="close-modal" class="font-sans text-xs uppercase tracking-widest hover:text-skyblue transition-colors duration-300 pb-1">
+                <button id="close-modal" class="font-sans text-xs uppercase tracking-widest hover:text-skyblue transition-colors duration-300 pb-1 cursor-pointer z-50">
                     [ Close ]
                 </button>
             </div>
-            <div class="flex-grow w-full h-full bg-white relative">
-                <iframe id="modal-iframe" src="" class="absolute inset-0 w-full h-full border-none" title="Project Preview"></iframe>
+            <div class="flex-grow w-full h-full relative">
+                <iframe id="modal-iframe" src="" class="absolute inset-0 w-full h-full border-none bg-white" title="Project Preview"></iframe>
             </div>
         </div>
     </div>
 
-    <nav class="fixed top-0 w-full p-6 md:p-12 z-40 flex justify-between items-center mix-blend-difference text-white">
+    <nav class="fixed top-0 w-full p-6 md:p-12 z-40 flex justify-between items-center mix-blend-difference text-white pointer-events-none">
         <div class="font-sans text-xs uppercase tracking-[0.2em]">aescaesse</div>
         <div class="font-sans text-xs uppercase tracking-[0.2em] hidden md:block">Digital Craft</div>
     </nav>
@@ -54,15 +71,30 @@
             </div>
         </section>
 
-        <section class="py-32 md:py-48 px-6 md:px-12 max-w-5xl mx-auto">
+        <section class="py-32 md:py-48 px-6 md:px-12 max-w-7xl mx-auto">
             <h2 class="font-serif text-4xl md:text-6xl mb-16 border-b border-black pb-8">
                 <span class="reveal-wrapper"><span class="reveal-text scroll-reveal">Offerings.</span></span>
             </h2>
-            <ul class="flex flex-col gap-12 font-serif text-3xl md:text-5xl text-black">
-                <li class="reveal-wrapper"><span class="reveal-text scroll-reveal hover:text-skyblue transition-colors duration-500 cursor-default">Portfolios</span></li>
-                <li class="reveal-wrapper"><span class="reveal-text scroll-reveal hover:text-skyblue transition-colors duration-500 cursor-default">V-Cards</span></li>
-                <li class="reveal-wrapper"><span class="reveal-text scroll-reveal hover:text-skyblue transition-colors duration-500 cursor-default">Gastronomy</span></li>
-            </ul>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 border-t border-black pt-12">
+                <div class="flex flex-col gap-4 group">
+                    <span class="font-sans text-xs tracking-widest text-gray-500 uppercase">01</span>
+                    <h3 class="font-serif text-3xl group-hover:text-skyblue transition-colors duration-300">Portfolios</h3>
+                    <p class="font-sans text-sm text-gray-700 leading-relaxed">Bespoke digital galleries crafted for creatives, artists, and studios who require a minimalist canvas to let their work speak for itself.</p>
+                </div>
+                
+                <div class="flex flex-col gap-4 group">
+                    <span class="font-sans text-xs tracking-widest text-gray-500 uppercase">02</span>
+                    <h3 class="font-serif text-3xl group-hover:text-skyblue transition-colors duration-300">V-Cards</h3>
+                    <p class="font-sans text-sm text-gray-700 leading-relaxed">Sophisticated, single-page digital business cards designed for executives and professionals seeking an impactful first impression.</p>
+                </div>
+                
+                <div class="flex flex-col gap-4 group">
+                    <span class="font-sans text-xs tracking-widest text-gray-500 uppercase">03</span>
+                    <h3 class="font-serif text-3xl group-hover:text-skyblue transition-colors duration-300">Gastronomy</h3>
+                    <p class="font-sans text-sm text-gray-700 leading-relaxed">Elegant reservation interfaces and digital menus tailored exclusively for fine dining establishments and haute cuisine.</p>
+                </div>
+            </div>
         </section>
 
         <section class="py-32 md:py-48 px-6 md:px-12 max-w-7xl mx-auto min-h-screen">

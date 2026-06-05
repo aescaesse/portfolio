@@ -1,11 +1,10 @@
-/* style.css */
 ::selection {
     background-color: #87CEEB;
     color: #000000;
 }
 
 body {
-    background-color: #FFFFFF;
+    background-color: #F4F4F0;
     color: #000000;
     overflow-x: hidden;
 }
@@ -24,9 +23,11 @@ body {
 ::-webkit-scrollbar {
     width: 8px;
 }
+
 ::-webkit-scrollbar-track {
-    background: #FFFFFF;
+    background: #F4F4F0;
 }
+
 ::-webkit-scrollbar-thumb {
     background: #000000;
 }

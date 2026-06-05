@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			title: 'Joanna Burlikowska', 
 			description: 'A refined digital gallery showcasing multidisciplinary works across visual identity, photography, and traditional fine art.', 
 			iframeURL: 'https://aescaesse.github.io/hipnotizingsky/'
-		},
+		}/*,
         { 
             id: 2, 
             title: 'Maison Blanc', 
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
             title: 'Obscura', 
             description: 'A stark, high-contrast gallery for architectural photography.', 
             iframeURL: 'https://en.wikipedia.org/wiki/Architectural_photography' 
-        }
+       */ }
     ];
 
     const worksContainer = document.getElementById('works-container');

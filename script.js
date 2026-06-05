@@ -4,11 +4,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const projects = [
         { 
-            id: 1, 
-            title: 'L’Atelier', 
-            description: 'A bespoke digital portfolio for high-fashion editorial curation.', 
-            iframeURL: 'https://aescaesse.github.io/hipnotizingsky/'
-        },
+			id: 1, 
+			title: 'Joanna Burlikowska', 
+			description: 'A refined digital gallery showcasing multidisciplinary works across visual identity, photography, and traditional fine art.', 
+			iframeURL: 'https://aescaesse.github.io/hipnotizingsky/'
+		},
         { 
             id: 2, 
             title: 'Maison Blanc', 

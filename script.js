@@ -37,13 +37,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     projects.forEach((project) => {
         const projectHTML = `
-            <div class="group border-b border-black py-8 md:py-12 cursor-pointer flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all duration-500 px-4 md:px-8 -mx-4 md:-mx-8 project-item relative overflow-hidden shine-hover" data-id="${project.id}">
-                <div class="reveal-wrapper px-4 md:px-6 relative z-10">
+            <div class="group border-b border-black py-8 md:py-12 cursor-pointer flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all duration-500 project-item relative overflow-hidden shine-hover" data-id="${project.id}">
+                <div class="reveal-wrapper relative z-10">
                     <h3 class="reveal-text scroll-reveal font-serif text-4xl md:text-6xl transition-all duration-500 group-hover:text-skyblue group-hover:drop-shadow-[0_0_12px_rgba(135,206,235,0.4)]">
                         ${project.title}
                     </h3>
                 </div>
-                <div class="reveal-wrapper px-4 md:px-6 relative z-10">
+                <div class="reveal-wrapper relative z-10">
                     <p class="reveal-text scroll-reveal font-sans text-xs md:text-sm uppercase tracking-widest max-w-xs md:text-right transition-colors duration-500 group-hover:text-skyblue">
                         ${project.description}
                     </p>
@@ -102,18 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.key === 'Escape') closeModal();
     });
 
-    const tlHero = gsap.timeline({
-        paused: true,
-        onComplete: () => {
-            gsap.to(".hero-wrapper", {
-                y: -12,
-                duration: 3.5,
-                ease: "sine.inOut",
-                yoyo: true,
-                repeat: -1
-            });
-        }
-    });
+    const tlHero = gsap.timeline({ paused: true });
 
     tlHero.to(".hero-text", {
         y: "0%",

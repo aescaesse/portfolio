@@ -25,10 +25,8 @@ body {
     overflow: hidden;
     display: inline-block;
     vertical-align: top;
-    padding-top: 0.1em;
-    padding-bottom: 0.3em;
-    margin-top: -0.1em;
-    margin-bottom: -0.3em;
+    padding: 0.1em 0.1em 0.3em 0.1em;
+    margin: -0.1em -0.1em -0.3em -0.1em;
 }
 
 .reveal-text {

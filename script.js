@@ -22,6 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
         infinite: false,
     });
 
+    lenis.scrollTo(0, { immediate: true });
+
     gsap.registerPlugin(ScrollTrigger);
 
     lenis.on('scroll', ScrollTrigger.update);
@@ -167,17 +169,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    document.querySelectorAll('.project-item').forEach(item => {
-        gsap.to(item, {
-            scrollTrigger: {
-                trigger: item,
-                start: "top 90%",
-            },
-            y: 0,
-            opacity: 1,
-            duration: 1,
-            ease: "power3.out"
-        });
+    gsap.to(".project-item", {
+        scrollTrigger: {
+            trigger: "#works-container",
+            start: "top 85%",
+        },
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        stagger: 0.2,
+        ease: "power3.out"
     });
 
     gsap.to(".offering-item", {

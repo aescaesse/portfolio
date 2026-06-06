@@ -12,7 +12,7 @@ body {
 .reveal-wrapper {
     overflow: hidden;
     display: inline-block;
-    vertical-align: top;
+    vertical-align: top; 
 }
 
 .reveal-text {

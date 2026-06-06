@@ -8,38 +8,20 @@ document.addEventListener("DOMContentLoaded", () => {
             title: 'Joanna Burlikowska', 
             description: 'A refined digital portfolio showcasing multidisciplinary works across visual identity, photography, and traditional fine art.', 
             iframeURL: 'https://aescaesse.github.io/hipnotizingsky/'
-        }/*,
-        { 
-            id: 2, 
-            title: 'Maison Blanc', 
-            description: 'An elegant reservation and menu experience for fine gastronomy.', 
-            iframeURL: 'https://example.com'
-        },
-        { 
-            id: 3, 
-            title: 'Aura', 
-            description: 'A minimalist digital V-Card designed for executive networking.', 
-            iframeURL: 'https://example.com' 
-        },
-        { 
-            id: 4, 
-            title: 'Obscura', 
-            description: 'A stark, high-contrast gallery for architectural photography.', 
-            iframeURL: 'https://en.wikipedia.org/wiki/Architectural_photography' 
-      } */ 
+        }
     ];
 
     const worksContainer = document.getElementById('works-container');
 
     projects.forEach((project) => {
         const projectHTML = `
-            <div class="group border-b border-black py-8 md:py-12 cursor-pointer flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors duration-500 hover:bg-black hover:text-white px-4 md:px-8 -mx-4 md:-mx-8 project-item" data-id="${project.id}">
-                <div class="reveal-wrapper">
+            <div class="group border-b border-black py-8 md:py-12 cursor-pointer flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors duration-500 hover:bg-black hover:text-white project-item" data-id="${project.id}">
+                <div class="reveal-wrapper px-4 md:px-6">
                     <h3 class="reveal-text scroll-reveal font-serif text-4xl md:text-6xl group-hover:text-skyblue transition-colors duration-500">
                         ${project.title}
                     </h3>
                 </div>
-                <div class="reveal-wrapper">
+                <div class="reveal-wrapper px-4 md:px-6">
                     <p class="reveal-text scroll-reveal font-sans text-xs md:text-sm uppercase tracking-widest max-w-xs md:text-right group-hover:text-skyblue transition-colors duration-500">
                         ${project.description}
                     </p>

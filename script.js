@@ -1,6 +1,26 @@
 document.addEventListener("DOMContentLoaded", () => {
     
+    const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        direction: 'vertical',
+        gestureDirection: 'vertical',
+        smooth: true,
+        mouseMultiplier: 1,
+        smoothTouch: false,
+        touchMultiplier: 2,
+        infinite: false,
+    });
+
     gsap.registerPlugin(ScrollTrigger);
+
+    lenis.on('scroll', ScrollTrigger.update);
+
+    gsap.ticker.add((time) => {
+        lenis.raf(time * 1000);
+    });
+
+    gsap.ticker.lagSmoothing(0);
 
     let progress = { value: 0 };
     const counterEl = document.getElementById("preloader-counter");
@@ -65,6 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const project = projects.find(p => p.id === projectId);
 
             if (project) {
+                lenis.stop();
                 modalTitle.innerText = project.title;
                 modalDesc.innerText = project.description;
                 modalIframe.src = project.iframeURL;
@@ -90,6 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 modalIframe.src = "";
                 document.body.style.overflow = '';
                 modal.style.pointerEvents = 'none';
+                lenis.start();
             }
         });
     }

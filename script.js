@@ -57,14 +57,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     projects.forEach((project) => {
         const projectHTML = `
-            <div class="group border-b border-black py-8 md:py-12 cursor-pointer flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-opacity duration-500 project-item relative opacity-0 translate-y-8 hover:opacity-50" data-id="${project.id}">
+            <div class="group border-b border-black py-8 md:py-12 cursor-pointer flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all duration-700 project-item relative opacity-0 translate-y-8" data-id="${project.id}">
                 <div class="relative z-10 flex items-center">
-                    <h3 class="font-serif text-4xl md:text-6xl transition-colors duration-500">
+                    <svg class="w-8 h-8 absolute left-0 opacity-0 -translate-x-8 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100 group-hover:translate-x-0 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="1" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                    <h3 class="font-serif text-4xl md:text-6xl transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-12 group-hover:text-gray-600">
                         ${project.title}
                     </h3>
                 </div>
                 <div class="relative z-10">
-                    <p class="font-sans text-xs md:text-sm uppercase tracking-widest max-w-xs md:text-right transition-colors duration-500">
+                    <p class="font-sans text-xs md:text-sm uppercase tracking-widest max-w-xs md:text-right transition-colors duration-700 group-hover:text-gray-400">
                         ${project.description}
                     </p>
                 </div>

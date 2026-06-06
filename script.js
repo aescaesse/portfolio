@@ -131,4 +131,16 @@ document.addEventListener("DOMContentLoaded", () => {
             ease: "power3.out"
         });
     });
+
+    gsap.to(".offering-item", {
+        scrollTrigger: {
+            trigger: ".offerings-grid",
+            start: "top 85%",
+        },
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        stagger: 0.2,
+        ease: "power3.out"
+    });
 });

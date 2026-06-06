@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
             id: 1, 
             title: 'Joanna Burlikowska', 
             description: 'A refined digital portfolio showcasing multidisciplinary works across visual identity, photography, and traditional fine art.', 
-            imageURL: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2560&auto=format&fit=crop'
+            imageURL: 'images/joanna-preview.webp'
         }
     ];
 
@@ -71,13 +71,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const idString = project.id.toString().padStart(2, '0');
         const projectHTML = `
             <div class="flex flex-col gap-4 group cursor-pointer project-item opacity-0 translate-y-8" data-id="${project.id}">
-                <div class="w-full aspect-[4/3] overflow-hidden mb-2 bg-gray-200">
-                    <img src="${project.imageURL}" alt="${project.title}" class="w-full h-full object-cover grayscale transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:grayscale-0 group-hover:scale-105">
+                <div class="relative w-full aspect-[4/3] overflow-hidden bg-gray-200">
+                    <img src="${project.imageURL}" alt="${project.title}" class="absolute inset-0 w-full h-full object-cover grayscale transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:grayscale-0 group-hover:scale-105">
+                    
+                    <div class="absolute inset-0 bg-black/30 transition-colors duration-700 group-hover:bg-black/10"></div>
+                    
+                    <div class="absolute inset-0 p-6 flex flex-col justify-between z-10">
+                        <span class="font-sans text-xs tracking-widest text-offwhite uppercase">${idString}</span>
+                        <h3 class="font-serif text-3xl md:text-4xl text-offwhite transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-2 drop-shadow-md">
+                            ${project.title}
+                        </h3>
+                    </div>
                 </div>
-                <span class="font-sans text-xs tracking-widest text-gray-500 uppercase">${idString}</span>
-                <h3 class="font-serif text-3xl group-hover:text-gray-500 transition-colors duration-300">
-                    ${project.title}
-                </h3>
+                
                 <p class="font-sans text-sm text-gray-700 leading-relaxed">
                     ${project.description}
                 </p>

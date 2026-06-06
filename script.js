@@ -61,7 +61,8 @@ document.addEventListener("DOMContentLoaded", () => {
             id: 1, 
             title: 'Joanna Burlikowska', 
             description: 'A refined digital portfolio showcasing multidisciplinary works across visual identity, photography, and traditional fine art.', 
-            imageURL: 'images/joanna-preview.webp'
+            imageURL: 'images/joanna-preview.webp',
+            linkURL: 'https://aescaesse.github.io/hipnotizingsky/'
         }
     ];
 
@@ -70,13 +71,13 @@ document.addEventListener("DOMContentLoaded", () => {
     projects.forEach((project) => {
         const idString = project.id.toString().padStart(2, '0');
         const projectHTML = `
-            <div class="flex flex-col gap-4 group cursor-pointer project-item opacity-0 translate-y-8" data-id="${project.id}">
-                <div class="relative w-full aspect-[4/3] overflow-hidden bg-gray-200">
-                    <img src="${project.imageURL}" alt="${project.title}" class="absolute inset-0 w-full h-full object-cover grayscale transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:grayscale-0 group-hover:scale-105">
+            <a href="${project.linkURL}" target="_blank" rel="noopener noreferrer" class="flex flex-col gap-4 group cursor-pointer project-item opacity-0 translate-y-8 block" data-id="${project.id}">
+                <div class="relative w-full aspect-[4/3] overflow-hidden bg-gray-200 flex items-center justify-center">
+                    <img src="${project.imageURL}" alt="${project.title}" class="w-[85%] h-[85%] object-cover grayscale transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:grayscale-0 group-hover:scale-105 shadow-xl">
                     
-                    <div class="absolute inset-0 bg-black/30 transition-colors duration-700 group-hover:bg-black/10"></div>
+                    <div class="absolute inset-0 bg-black/20 transition-colors duration-700 group-hover:bg-black/10"></div>
                     
-                    <div class="absolute inset-0 p-6 flex flex-col justify-between z-10">
+                    <div class="absolute inset-0 p-6 flex flex-col justify-between z-10 pointer-events-none">
                         <span class="font-sans text-xs tracking-widest text-offwhite uppercase">${idString}</span>
                         <h3 class="font-serif text-3xl md:text-4xl text-offwhite transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-2 drop-shadow-md">
                             ${project.title}
@@ -87,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p class="font-sans text-sm text-gray-700 leading-relaxed">
                     ${project.description}
                 </p>
-            </div>
+            </a>
         `;
         worksContainer.insertAdjacentHTML('beforeend', projectHTML);
     });

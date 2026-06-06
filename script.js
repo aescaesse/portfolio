@@ -44,12 +44,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Dodałem imageURL ze zdjęciem rzeźby jako test wizualny
     const projects = [
         { 
             id: 1, 
             title: 'Joanna Burlikowska', 
             description: 'A refined digital portfolio showcasing multidisciplinary works across visual identity, photography, and traditional fine art.', 
-            iframeURL: 'https://aescaesse.github.io/hipnotizingsky/'
+            iframeURL: 'https://aescaesse.github.io/hipnotizingsky/',
+            imageURL: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2560&auto=format&fit=crop' 
         }
     ];
 
@@ -57,14 +59,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     projects.forEach((project) => {
         const projectHTML = `
-            <div class="group border-b border-black py-8 md:py-12 cursor-pointer flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all duration-500 project-item relative overflow-hidden shine-hover opacity-0 translate-y-8" data-id="${project.id}">
-                <div class="relative z-10">
-                    <h3 class="font-serif text-4xl md:text-6xl transition-all duration-500 group-hover:text-skyblue group-hover:drop-shadow-[0_0_12px_rgba(135,206,235,0.4)]">
+            <div class="group border-b border-black py-8 md:py-12 cursor-pointer flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all duration-700 project-item relative opacity-0 translate-y-8" data-id="${project.id}">
+                <div class="relative z-10 flex items-center">
+                    <div class="w-0 overflow-hidden transition-all duration-700 ease-out group-hover:w-16 md:group-hover:w-24 hidden md:flex items-center opacity-0 group-hover:opacity-100">
+                        <span class="font-sans text-xs tracking-widest uppercase text-gray-500 whitespace-nowrap">View —</span>
+                    </div>
+                    <h3 class="font-serif text-4xl md:text-6xl transition-all duration-700 group-hover:italic group-hover:text-gray-700">
                         ${project.title}
                     </h3>
                 </div>
                 <div class="relative z-10">
-                    <p class="font-sans text-xs md:text-sm uppercase tracking-widest max-w-xs md:text-right transition-colors duration-500 group-hover:text-skyblue">
+                    <p class="font-sans text-xs md:text-sm uppercase tracking-widest max-w-xs md:text-right transition-colors duration-700 group-hover:text-gray-500">
                         ${project.description}
                     </p>
                 </div>
@@ -78,8 +83,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalDesc = document.getElementById('modal-desc');
     const modalIframe = document.getElementById('modal-iframe');
     const btnClose = document.getElementById('close-modal');
+    
+    // Zmienne dla pływającego zdjęcia
+    const hoverImgContainer = document.getElementById('hover-image-container');
+    const hoverImg = document.getElementById('hover-image');
 
     document.querySelectorAll('.project-item').forEach(item => {
+        
+        // Logika otwierania modala
         item.addEventListener('click', function() {
             const projectId = parseInt(this.getAttribute('data-id'));
             const project = projects.find(p => p.id === projectId);
@@ -99,6 +110,44 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.body.style.overflow = 'hidden';
                 modal.style.pointerEvents = 'auto'; 
             }
+        });
+
+        // Logika wjazdu pływającego zdjęcia
+        item.addEventListener('mouseenter', (e) => {
+            const projectId = parseInt(item.getAttribute('data-id'));
+            const project = projects.find(p => p.id === projectId);
+            
+            if (project && project.imageURL) {
+                hoverImg.src = project.imageURL;
+                gsap.to(hoverImgContainer, {
+                    autoAlpha: 1,
+                    scale: 1,
+                    duration: 0.5,
+                    ease: "power3.out"
+                });
+            }
+        });
+
+        // Logika zjazdu pływającego zdjęcia
+        item.addEventListener('mouseleave', () => {
+            gsap.to(hoverImgContainer, {
+                autoAlpha: 0,
+                scale: 0.95,
+                duration: 0.4,
+                ease: "power2.inOut"
+            });
+        });
+
+        // Płynne podążanie za myszką
+        item.addEventListener('mousemove', (e) => {
+            gsap.to(hoverImgContainer, {
+                x: e.clientX,
+                y: e.clientY,
+                xPercent: 10,  // delikatne przesunięcie w prawo względem kursora
+                yPercent: -50, // wycentrowanie pionowo do kursora
+                duration: 0.8, 
+                ease: "power3.out"
+            });
         });
     });
 

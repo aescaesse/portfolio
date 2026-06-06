@@ -1,6 +1,6 @@
 ::selection {
-    background-color: #87CEEB;
-    color: #000000;
+    background-color: #000000;
+    color: #F4F4F0;
 }
 
 body {
@@ -46,26 +46,4 @@ body {
 
 ::-webkit-scrollbar-thumb {
     background: #000000;
-}
-
-.shine-hover::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -150%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(to right, transparent, rgba(135, 206, 235, 0.2), transparent);
-    transform: skewX(-25deg);
-    z-index: 1;
-    pointer-events: none;
-}
-
-.shine-hover:hover::before {
-    animation: shine 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes shine {
-    0% { left: -150%; }
-    100% { left: 150%; }
 }

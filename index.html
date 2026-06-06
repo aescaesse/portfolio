@@ -19,7 +19,6 @@
                     colors: {
                         black: '#000000',
                         offwhite: '#F4F4F0',
-                        skyblue: '#87CEEB',
                     },
                     fontFamily: {
                         serif: ['"Playfair Display"', 'serif'],
@@ -33,6 +32,10 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="antialiased bg-offwhite text-black">
+
+    <div id="hover-image-container" class="fixed top-0 left-0 pointer-events-none w-[20rem] h-[28rem] z-40 overflow-hidden hidden md:block" style="visibility: hidden; opacity: 0; transform: scale(0.95);">
+        <img id="hover-image" src="" alt="Project Preview" class="w-full h-full object-cover">
+    </div>
 
     <div class="noise-overlay"></div>
 
@@ -48,7 +51,7 @@
                     <h2 id="modal-title" class="font-serif text-3xl md:text-5xl tracking-tight mb-2"></h2>
                     <p id="modal-desc" class="font-sans text-sm md:text-base text-gray-700 max-w-xl uppercase tracking-widest"></p>
                 </div>
-                <button id="close-modal" class="font-sans text-xs uppercase tracking-widest hover:text-skyblue transition-colors duration-300 pb-1 cursor-pointer z-50">
+                <button id="close-modal" class="font-sans text-xs uppercase tracking-widest hover:text-black transition-colors duration-300 pb-1 cursor-pointer z-50">
                     [ Close ]
                 </button>
             </div>
@@ -79,7 +82,7 @@
             <div class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4">
                 <span class="font-sans text-[0.6rem] uppercase tracking-widest">Scroll</span>
                 <div class="w-[1px] h-12 bg-black overflow-hidden relative">
-                    <div class="scroll-line absolute top-0 left-0 w-full h-full bg-skyblue -translate-y-full"></div>
+                    <div class="scroll-line absolute top-0 left-0 w-full h-full bg-black -translate-y-full"></div>
                 </div>
             </div>
         </section>
@@ -92,19 +95,19 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 pt-4 offerings-grid">
                 <div class="flex flex-col gap-4 group offering-item opacity-0 translate-y-8">
                     <span class="font-sans text-xs tracking-widest text-gray-500 uppercase">01</span>
-                    <h3 class="font-serif text-3xl group-hover:text-skyblue transition-colors duration-300">Portfolios</h3>
+                    <h3 class="font-serif text-3xl transition-colors duration-300">Portfolios</h3>
                     <p class="font-sans text-sm text-gray-700 leading-relaxed">Bespoke digital galleries crafted for creatives, artists, and studios who require a minimalist canvas to let their work speak for itself.</p>
                 </div>
                 
                 <div class="flex flex-col gap-4 group offering-item opacity-0 translate-y-8">
                     <span class="font-sans text-xs tracking-widest text-gray-500 uppercase">02</span>
-                    <h3 class="font-serif text-3xl group-hover:text-skyblue transition-colors duration-300">V-Cards</h3>
+                    <h3 class="font-serif text-3xl transition-colors duration-300">V-Cards</h3>
                     <p class="font-sans text-sm text-gray-700 leading-relaxed">Sophisticated, single-page digital business cards designed for executives and professionals seeking an impactful first impression.</p>
                 </div>
                 
                 <div class="flex flex-col gap-4 group offering-item opacity-0 translate-y-8">
                     <span class="font-sans text-xs tracking-widest text-gray-500 uppercase">03</span>
-                    <h3 class="font-serif text-3xl group-hover:text-skyblue transition-colors duration-300">Gastronomy</h3>
+                    <h3 class="font-serif text-3xl transition-colors duration-300">Gastronomy</h3>
                     <p class="font-sans text-sm text-gray-700 leading-relaxed">Elegant reservation interfaces and digital menus tailored exclusively for fine dining establishments and haute cuisine.</p>
                 </div>
             </div>
@@ -116,19 +119,19 @@
             </h2>
             
             <div id="works-container" class="flex flex-col">
-            </div>
+                </div>
         </section>
     </main>
 
     <footer class="py-24 px-6 md:px-12 border-t border-black flex flex-col md:flex-row justify-between items-start md:items-end gap-12 max-w-7xl mx-auto relative z-10">
         <div>
             <h3 class="font-serif text-3xl mb-4">Let us craft something <em class="italic font-light">timeless</em>.</h3>
-            <a href="mailto:contact@aescaesse.com" class="font-sans text-sm uppercase tracking-widest hover:text-skyblue transition-colors duration-300">contact@aescaesse.com</a>
+            <a href="mailto:contact@aescaesse.com" class="font-sans text-sm uppercase tracking-widest hover:text-gray-500 transition-colors duration-300">contact@aescaesse.com</a>
         </div>
         <div class="flex gap-8 font-sans text-xs uppercase tracking-[0.2em]">
-            <a href="https://www.instagram.com/aescaesse.works/" target="_blank" rel="noopener noreferrer" class="hover:text-skyblue transition-colors duration-300">Instagram</a>
-            <a href="#" class="hover:text-skyblue transition-colors duration-300">LinkedIn</a>
-            <a href="#" class="hover:text-skyblue transition-colors duration-300">X</a>
+            <a href="https://www.instagram.com/aescaesse.works/" target="_blank" rel="noopener noreferrer" class="hover:text-gray-500 transition-colors duration-300">Instagram</a>
+            <a href="#" class="hover:text-gray-500 transition-colors duration-300">LinkedIn</a>
+            <a href="#" class="hover:text-gray-500 transition-colors duration-300">X</a>
         </div>
     </footer>
 

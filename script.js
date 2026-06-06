@@ -2,6 +2,28 @@ document.addEventListener("DOMContentLoaded", () => {
     
     gsap.registerPlugin(ScrollTrigger);
 
+    let progress = { value: 0 };
+    const counterEl = document.getElementById("preloader-counter");
+
+    gsap.to(progress, {
+        value: 100,
+        duration: 2.2,
+        ease: "power2.inOut",
+        onUpdate: () => {
+            counterEl.innerText = Math.round(progress.value) + "%";
+        },
+        onComplete: () => {
+            gsap.to("#preloader", {
+                yPercent: -100,
+                duration: 1.2,
+                ease: "power4.inOut",
+                onComplete: () => {
+                    tlHero.play();
+                }
+            });
+        }
+    });
+
     const projects = [
         { 
             id: 1, 
@@ -81,6 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const tlHero = gsap.timeline({
+        paused: true,
         onComplete: () => {
             gsap.to(".hero-wrapper", {
                 y: -12,
@@ -96,8 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
         y: "0%",
         duration: 1.2,
         stagger: 0.2,
-        ease: "power4.out",
-        delay: 0.2
+        ease: "power4.out"
     });
 
     gsap.to(".scroll-line", {

@@ -76,11 +76,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="relative w-full h-full overflow-hidden shadow-2xl transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105">
                         <img src="${project.imageURL}" alt="${project.title}" class="absolute inset-0 w-full h-full object-cover object-top grayscale transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:grayscale-0">
                         
-                        <div class="absolute inset-0 bg-black/40 transition-colors duration-700 group-hover:bg-black/20"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/40 transition-opacity duration-700 group-hover:opacity-60"></div>
                         
-                        <div class="absolute inset-0 p-5 md:p-8 flex flex-col justify-between z-10 pointer-events-none">
-                            <span class="font-sans text-xs tracking-widest text-white/90 uppercase">${idString}</span>
-                            <h3 class="font-serif text-2xl md:text-3xl lg:text-4xl text-white transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-2">
+                        <div class="absolute inset-0 p-4 flex flex-col justify-between z-10 pointer-events-none">
+                            <span class="font-sans text-xs tracking-widest text-white/90 uppercase drop-shadow-md">${idString}</span>
+                            <h3 class="font-serif text-lg md:text-xl text-white transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-2 drop-shadow-md">
                                 ${project.title}
                             </h3>
                         </div>

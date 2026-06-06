@@ -68,21 +68,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const worksContainer = document.getElementById('works-container');
 
     projects.forEach((project) => {
+        const idString = project.id.toString().padStart(2, '0');
         const projectHTML = `
-            <div class="group border-b border-black py-8 md:py-12 cursor-pointer flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all duration-700 project-item relative opacity-0 translate-y-8" data-id="${project.id}">
-                <div class="relative z-10 flex items-center">
-                    <svg class="w-8 h-8 absolute left-0 opacity-0 -translate-x-8 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100 group-hover:translate-x-0 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="1" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                    <h3 class="font-serif text-4xl md:text-6xl transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-12 group-hover:text-gray-600">
-                        ${project.title}
-                    </h3>
-                </div>
-                <div class="relative z-10">
-                    <p class="font-sans text-xs md:text-sm uppercase tracking-widest max-w-xs md:text-right transition-colors duration-700 group-hover:text-gray-400">
-                        ${project.description}
-                    </p>
-                </div>
+            <div class="flex flex-col gap-4 group cursor-pointer project-item opacity-0 translate-y-8" data-id="${project.id}">
+                <span class="font-sans text-xs tracking-widest text-gray-500 uppercase">${idString}</span>
+                <h3 class="font-serif text-3xl group-hover:text-gray-500 transition-colors duration-300">
+                    ${project.title}
+                </h3>
+                <p class="font-sans text-sm text-gray-700 leading-relaxed">
+                    ${project.description}
+                </p>
             </div>
         `;
         worksContainer.insertAdjacentHTML('beforeend', projectHTML);
@@ -171,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     gsap.to(".project-item", {
         scrollTrigger: {
-            trigger: "#works-container",
+            trigger: ".works-grid",
             start: "top 85%",
         },
         y: 0,

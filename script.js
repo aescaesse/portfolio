@@ -39,12 +39,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const projectHTML = `
             <div class="group border-b border-black py-8 md:py-12 cursor-pointer flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all duration-500 project-item relative overflow-hidden shine-hover" data-id="${project.id}">
                 <div class="reveal-wrapper relative z-10">
-                    <h3 class="reveal-text scroll-reveal font-serif text-4xl md:text-6xl transition-all duration-500 group-hover:text-skyblue group-hover:drop-shadow-[0_0_12px_rgba(135,206,235,0.4)]">
+                    <h3 class="reveal-text project-reveal font-serif text-4xl md:text-6xl transition-all duration-500 group-hover:text-skyblue group-hover:drop-shadow-[0_0_12px_rgba(135,206,235,0.4)]">
                         ${project.title}
                     </h3>
                 </div>
                 <div class="reveal-wrapper relative z-10">
-                    <p class="reveal-text scroll-reveal font-sans text-xs md:text-sm uppercase tracking-widest max-w-xs md:text-right transition-colors duration-500 group-hover:text-skyblue">
+                    <p class="reveal-text project-reveal font-sans text-xs md:text-sm uppercase tracking-widest max-w-xs md:text-right transition-colors duration-500 group-hover:text-skyblue">
                         ${project.description}
                     </p>
                 </div>
@@ -124,6 +124,18 @@ document.addEventListener("DOMContentLoaded", () => {
         gsap.to(element, {
             scrollTrigger: {
                 trigger: element.closest('.reveal-wrapper'),
+                start: "top 90%",
+            },
+            y: "0%",
+            duration: 1,
+            ease: "power3.out"
+        });
+    });
+
+    document.querySelectorAll('.project-item').forEach(item => {
+        gsap.to(item.querySelectorAll('.project-reveal'), {
+            scrollTrigger: {
+                trigger: item,
                 start: "top 90%",
             },
             y: "0%",

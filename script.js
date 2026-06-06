@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    gsap.to(".offering-item", {
+    gsap.to(".offering-item", { 
         scrollTrigger: {
             trigger: ".offerings-grid",
             start: "top 85%",

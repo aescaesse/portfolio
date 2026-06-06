@@ -71,21 +71,23 @@ document.addEventListener("DOMContentLoaded", () => {
     projects.forEach((project) => {
         const idString = project.id.toString().padStart(2, '0');
         const projectHTML = `
-            <a href="${project.linkURL}" target="_blank" rel="noopener noreferrer" class="flex flex-col gap-4 group cursor-pointer project-item opacity-0 translate-y-8 block" data-id="${project.id}">
-                <div class="relative w-full aspect-[4/3] overflow-hidden bg-gray-200 flex items-center justify-center">
-                    <img src="${project.imageURL}" alt="${project.title}" class="w-[85%] h-[85%] object-cover grayscale transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:grayscale-0 group-hover:scale-105 shadow-xl">
-                    
-                    <div class="absolute inset-0 bg-black/20 transition-colors duration-700 group-hover:bg-black/10"></div>
-                    
-                    <div class="absolute inset-0 p-6 flex flex-col justify-between z-10 pointer-events-none">
-                        <span class="font-sans text-xs tracking-widest text-offwhite uppercase">${idString}</span>
-                        <h3 class="font-serif text-3xl md:text-4xl text-offwhite transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-2 drop-shadow-md">
-                            ${project.title}
-                        </h3>
+            <a href="${project.linkURL}" target="_blank" rel="noopener noreferrer" class="flex flex-col gap-6 group cursor-pointer project-item opacity-0 translate-y-8" data-id="${project.id}">
+                <div class="relative w-full aspect-[4/3] bg-[#E8E8E4] flex items-center justify-center p-6 md:p-8 lg:p-10 transition-colors duration-700 group-hover:bg-[#E2E2DE]">
+                    <div class="relative w-full h-full overflow-hidden shadow-2xl transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105">
+                        <img src="${project.imageURL}" alt="${project.title}" class="absolute inset-0 w-full h-full object-cover object-top grayscale transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:grayscale-0">
+                        
+                        <div class="absolute inset-0 bg-black/40 transition-colors duration-700 group-hover:bg-black/20"></div>
+                        
+                        <div class="absolute inset-0 p-5 md:p-8 flex flex-col justify-between z-10 pointer-events-none">
+                            <span class="font-sans text-xs tracking-widest text-white/90 uppercase">${idString}</span>
+                            <h3 class="font-serif text-2xl md:text-3xl lg:text-4xl text-white transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-2">
+                                ${project.title}
+                            </h3>
+                        </div>
                     </div>
                 </div>
                 
-                <p class="font-sans text-sm text-gray-700 leading-relaxed">
+                <p class="font-sans text-sm text-gray-700 leading-relaxed pr-4">
                     ${project.description}
                 </p>
             </a>

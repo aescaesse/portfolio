@@ -96,6 +96,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (project) {
                 lenis.stop();
+                
+                const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+                document.body.style.paddingRight = `${scrollbarWidth}px`;
+                
                 modalTitle.innerText = project.title;
                 modalDesc.innerText = project.description;
                 modalIframe.src = project.iframeURL;
@@ -120,6 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
             onComplete: () => {
                 modalIframe.src = "";
                 document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
                 modal.style.pointerEvents = 'none';
                 lenis.start();
             }

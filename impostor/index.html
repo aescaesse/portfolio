@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Impostor AirConsole - Gra Imprezowa</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- PeerJS CDN -->
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <!-- QRCode.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    @keyframes pulse-fast {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .pulse-animation { animation: pulse-fast 1.5s infinite; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4 selection:bg-red-500 selection:text-white">
+
+  <!-- ==================== EKRAN GŁÓWNY (WYBÓR TRYBU) ==================== -->
+  <div id="screen-welcome" class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl text-center space-y-6">
+    <div>
+      <h1 class="text-4xl font-extrabold tracking-tight text-red-500 drop-shadow-lg">IMPOSTOR</h1>
+      <p class="text-slate-400 text-sm mt-1">AirConsole Multi-Screen Experience</p>
+    </div>
+
+    <div class="space-y-3 pt-2">
+      <button onclick="initHost()" class="w-full py-4 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold rounded-2xl shadow-lg transform transition active:scale-95 flex items-center justify-center gap-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        Stwórz Pokój (Ekran TV / Host)
+      </button>
+
+      <div class="relative flex py-2 items-center">
+        <div class="flex-grow border-t border-slate-800"></div>
+        <span class="flex-shrink mx-4 text-slate-500 text-xs uppercase font-semibold">lub dołącz telefonem</span>
+        <div class="flex-grow border-t border-slate-800"></div>
+      </div>
+
+      <div class="space-y-3">
+        <input type="text" id="input-nickname" placeholder="Twoje imię" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-center font-bold text-lg focus:outline-none focus:border-red-500 transition">
+        <input type="text" id="input-pin" maxlength="4" placeholder="4-cyfrowy PIN" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-center font-mono font-bold text-2xl tracking-widest focus:outline-none focus:border-red-500 transition uppercase">
+        <button onclick="initPlayer()" class="w-full py-4 bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold rounded-2xl shadow-md transform transition active:scale-95 border border-slate-700">
+          Dołącz do Gry (Kontroler)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== EKRAN HOSTA (TV / CENTRALNY) ==================== -->
+  <div id="screen-host" class="hidden max-w-4xl w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-8">
+    
+    <!-- LOBBY HOSTA -->
+    <div id="host-lobby" class="space-y-8">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-6 pb-6 border-b border-slate-800">
+        <div>
+          <span class="text-xs uppercase tracking-widest text-slate-400 font-semibold">Kod Dołączenia (PIN)</span>
+          <div id="host-pin-display" class="text-6xl font-black font-mono text-red-500 tracking-wider">----</div>
+        </div>
+        <div class="bg-white p-3 rounded-2xl shadow-inner flex flex-col items-center">
+          <div id="qrcode" class="w-32 h-32"></div>
+          <span class="text-[10px] text-slate-800 font-bold mt-1">Zeskanuj aparatów</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Ustawienia Gry -->
+        <div class="bg-slate-950/50 p-5 rounded-2xl border border-slate-800/80 space-y-4">
+          <h3 class="font-bold text-slate-300 text-sm uppercase tracking-wider">Ustawienia</h3>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">Liczba Impostorów</label>
+            <select id="setting-impostors" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 font-bold">
+              <option value="1">1 Impostor</option>
+              <option value="2">2 Impostorów</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">Kategoria haseł</label>
+            <select id="setting-category" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 font-bold">
+              <option value="Wszystkie">Wszystkie kategorie</option>
+              <option value="Jedzenie">Jedzenie i Napoje</option>
+              <option value="Zwierzęta">Zwierzęta</option>
+              <option value="Miejsca">Miejsca i Technologia</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2 pt-2">
+            <input type="checkbox" id="setting-mrwhite" class="w-4 h-4 accent-red-500 rounded">
+            <label for="setting-mrwhite" class="text-xs font-semibold text-slate-300">Tryb "Mr. White" (Impostor nie zna żadnego słowa)</label>
+          </div>
+        </div>
+
+        <!-- Lista Graczy -->
+        <div class="md:col-span-2 bg-slate-950/50 p-5 rounded-2xl border border-slate-800/80 space-y-4">
+          <div class="flex justify-between items-center">
+            <h3 class="font-bold text-slate-300 text-sm uppercase tracking-wider">Połączeni Gracze (<span id="player-count">0</span>)</h3>
+            <span class="text-xs text-slate-500">Min. 3 graczy</span>
+          </div>
+          <div id="host-players-list" class="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+            <!-- Gracze będą tu renderowani dynamicznie -->
+          </div>
+        </div>
+      </div>
+
+      <button id="btn-start-game" onclick="hostStartGame()" disabled class="w-full py-5 bg-red-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-red-500 text-white font-black text-xl tracking-wide rounded-2xl shadow-xl transform transition active:scale-98">
+        ROZPOCZNIJ GRĘ
+      </button>
+    </div>
+
+    <!-- ARENA HOSTA (FAZA GRA) -->
+    <div id="host-arena" class="hidden space-y-8 text-center">
+      <div id="host-phase-banner" class="bg-red-950/40 border border-red-800/50 p-4 rounded-2xl">
+        <h2 id="host-phase-title" class="text-2xl font-black text-red-400 uppercase tracking-wide">Sprawdzanie Haseł</h2>
+        <p id="host-phase-desc" class="text-slate-300 text-sm mt-1">Gracze odczytują swoje tajne słowa na telefonach...</p>
+      </div>
+
+      <div id="host-discussion-box" class="hidden space-y-6">
+        <div class="text-6xl font-black font-mono text-slate-100" id="discussion-timer">01:30</div>
+        <div class="p-6 bg-slate-950 rounded-2xl border border-slate-800 text-slate-300">
+          Podawajcie po kolei jedno słowo kojarzące się z Waszym hasłem!<br>
+          <span class="text-amber-400 font-bold text-sm">Nie wolno używać dokładnie swojego słowa!</span>
+        </div>
+      </div>
+
+      <!-- Wyniki Głosowania na Żywo -->
+      <div id="host-voting-box" class="hidden space-y-4">
+        <h3 class="text-lg font-bold text-slate-300">Stan Głosowania na Żywo</h3>
+        <div id="host-votes-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
+      </div>
+
+      <!-- Wynik Rundy -->
+      <div id="host-results-box" class="hidden space-y-6">
+        <div id="winner-announcement" class="text-4xl font-black text-amber-400"></div>
+        <div id="roles-reveal-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-left"></div>
+        <button onclick="hostReturnToLobby()" class="py-4 px-8 bg-slate-800 hover:bg-slate-700 font-bold rounded-xl border border-slate-700">
+          Wróć do Lobby
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== EKRAN GRACZA (KONTROLER TELEFONICZNY) ==================== -->
+  <div id="screen-player" class="hidden max-w-sm w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl text-center space-y-6">
+    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+      <span id="player-nickname-display" class="font-bold text-slate-300">Gracz</span>
+      <span class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-400">Połączono</span>
+    </div>
+
+    <!-- Faza 1: Odkrywanie Słowa -->
+    <div id="player-view-reveal" class="space-y-6">
+      <p class="text-sm text-slate-400">Naciśnij i przytrzymaj przycisk, aby bezpiecznie sprawdzić swoje słowo klucz.</p>
+      
+      <button id="btn-hold-word" class="w-full py-16 bg-slate-800 border-2 border-dashed border-red-500/50 rounded-2xl font-bold text-lg text-slate-300 select-none active:bg-red-950/40 active:border-red-500 transition">
+        PRZYTRZYMAJ, ABY ZOBACZYĆ
+      </button>
+
+      <div id="player-word-display" class="hidden p-6 bg-slate-950 border border-slate-800 rounded-2xl">
+        <span class="text-xs text-slate-500 block uppercase">Twoje Hasło</span>
+        <span id="player-secret-word" class="text-2xl font-black text-red-400 mt-1 block">---</span>
+      </div>
+    </div>
+
+    <!-- Faza 2: Dyskusja -->
+    <div id="player-view-discussion" class="hidden py-8 space-y-4">
+      <div class="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto text-red-400 pulse-animation">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+      </div>
+      <h3 class="text-xl font-bold text-slate-200">Trwa Dyskusja</h3>
+      <p class="text-xs text-slate-400">Sluchaj skojarzeń innych graczy i podaj swoje!</p>
+    </div>
+
+    <!-- Faza 3: Głosowanie -->
+    <div id="player-view-voting" class="hidden space-y-4">
+      <h3 class="text-lg font-bold text-slate-200">Kto jest Impostorem?</h3>
+      <div id="player-vote-buttons" class="space-y-2">
+        <!-- Przyciski do głosowania generowane dynamicznie -->
+      </div>
+    </div>
+
+    <!-- Faza 4: Koniec Rundy -->
+    <div id="player-view-ended" class="hidden py-8 space-y-2">
+      <h3 class="text-xl font-bold text-slate-200">Koniec Rundy!</h3>
+      <p class="text-xs text-slate-400">Sprawdź wyniki na głównym ekranie.</p>
+    </div>
+  </div>
+
+  <script>
+    // BAZA DANYCH HASEŁ (Pary: Większość vs Impostor)
+    const wordDatabase = {
+      "Jedzenie": [
+        ["Kawa", "Herbata"], ["Pizza", "Zapiekanka"], ["Jabłko", "Gruszka"], 
+        ["Chleb", "Bułka"], ["Czekolada", "Cukierki"], ["Burger", "Kebab"]
+      ],
+      "Zwierzęta": [
+        ["Pies", "Wilk"], ["Kot", "Tygrys"], ["Koń", "Zebra"], 
+        ["Orzeł", "Jastrząb"], ["Delfin", "Wieloryb"]
+      ],
+      "Miejsca": [
+        ["Kino", "Teatr"], ["Plaża", "Basen"], ["Szkoła", "Uczelnia"], 
+        ["Telefon", "Tablet"], ["Samochód", "Motocykl"]
+      ]
+    };
+
+    let peer = null;
+    let connections = []; // Dla Hosta: lista połączeń z kontrolerami
+    let hostConn = null;  // Dla Gracza: połączenie z Hostem
+    let myId = "";
+    let isHost = false;
+    let myNickname = "";
+
+    // Stan gry (Host)
+    let players = []; // { id, name, role, word, votedFor }
+    let currentPair = [];
+
+    // Helper: Przełączanie ekranów
+    function showScreen(screenId) {
+      document.querySelectorAll('#screen-welcome, #screen-host, #screen-player').forEach(el => el.classList.add('hidden'));
+      document.getElementById(screenId).classList.remove('hidden');
+    }
+
+    // Generator 4-cyfrowego PINu
+    function generatePin() {
+      return Math.floor(1000 + Math.random() * 9000).toString();
+    }
+
+    // =========================================================================
+    // LOGIKA HOSTA
+    // =========================================================================
+    function initHost() {
+      isHost = true;
+      const pin = generatePin();
+      const peerId = 'imp-room-' + pin;
+
+      peer = new Peer(peerId);
+
+      peer.on('open', (id) => {
+        showScreen('screen-host');
+        document.getElementById('host-pin-display').innerText = pin;
+        
+        // Generowanie QR Kodu do połączenia
+        const joinUrl = window.location.href.split('?')[0] + '?pin=' + pin;
+        document.getElementById('qrcode').innerHTML = "";
+        new QRCode(document.getElementById('qrcode'), {
+          text: joinUrl,
+          width: 128,
+          height: 128
+        });
+      });
+
+      peer.on('connection', (conn) => {
+        conn.on('data', (data) => handleHostMessage(conn, data));
+        conn.on('close', () => removePlayer(conn.peer));
+      });
+
+      peer.on('error', (err) => {
+        if(err.type === 'unavailable-id') {
+          // Jeśli PIN zajęty, spróbuj ponownie
+          initHost();
+        } else {
+          alert('Błąd sieci PeerJS: ' + err.message);
+        }
+      });
+    }
+
+    function handleHostMessage(conn, data) {
+      if (data.type === 'JOIN') {
+        const newPlayer = {
+          id: conn.peer,
+          conn: conn,
+          name: data.nickname || ('Gracz ' + (players.length + 1)),
+          word: '',
+          votedFor: null
+        };
+        players.push(newPlayer);
+        renderHostPlayers();
+        
+        // Odpowiedź dla kontrolera o udanym dołączeniu
+        conn.send({ type: 'JOIN_SUCCESS', nickname: newPlayer.name });
+      }
+      else if (data.type === 'VOTE') {
+        const p = players.find(x => x.id === conn.peer);
+        if (p) {
+          p.votedFor = data.targetId;
+          updateHostVotesUI();
+        }
+      }
+    }
+
+    function removePlayer(peerId) {
+      const p = players.find(x => x.id === peerId);
+      if (p && p.conn) p.conn.close();
+      players = players.filter(x => x.id !== peerId);
+      renderHostPlayers();
+    }
+
+    function renderHostPlayers() {
+      const list = document.getElementById('host-players-list');
+      list.innerHTML = '';
+      players.forEach(p => {
+        const item = document.createElement('div');
+        item.className = "flex items-center justify-between bg-slate-900 border border-slate-800 px-3 py-2 rounded-xl";
+        item.innerHTML = `
+          <span class="font-bold text-sm text-slate-200 truncate">${p.name}</span>
+          <button onclick="removePlayer('${p.id}')" class="text-xs text-red-400 hover:text-red-300 font-semibold ml-2">Wyrzuć</button>
+        `;
+        list.appendChild(item);
+      });
+      document.getElementById('player-count').innerText = players.length;
+      document.getElementById('btn-start-game').disabled = players.length < 3;
+    }
+
+    function hostStartGame() {
+      // 1. Losowanie kategorii i słów
+      const cat = document.getElementById('setting-category').value;
+      let pool = [];
+      if (cat === "Wszystkie") {
+        Object.values(wordDatabase).forEach(arr => pool.push(...arr));
+      } else {
+        pool = wordDatabase[cat] || wordDatabase["Jedzenie"];
+      }
+      currentPair = pool[Math.floor(Math.random() * pool.length)];
+      
+      const numImpostors = parseInt(document.getElementById('setting-impostors').value);
+      const mrWhite = document.getElementById('setting-mrwhite').checked;
+
+      // 2. Przypisanie ról
+      const indices = Array.from(Array(players.length).keys());
+      // Shuffle indices
+      indices.sort(() => Math.random() - 0.5);
+      const impostorIndices = indices.slice(0, numImpostors);
+
+      players.forEach((p, idx) => {
+        p.votedFor = null;
+        if (impostorIndices.includes(idx)) {
+          p.word = mrWhite ? "Jesteś Impostorem! (Brak słowa)" : currentPair[1];
+        } else {
+          p.word = currentPair[0];
+        }
+        // Wyślij słowo do kontrolera
+        p.conn.send({ type: 'GAME_START', word: p.word });
+      });
+
+      // 3. Zmiana widoku na Hoscie
+      document.getElementById('host-lobby').classList.add('hidden');
+      document.getElementById('host-arena').classList.remove('hidden');
+      document.getElementById('host-phase-title').innerText = "Sprawdzanie Haseł";
+      document.getElementById('host-phase-desc').innerText = "Gracze odczytują swoje tajne słowa na telefonach...";
+
+      // Automatyczne przejście do dyskusji po 10 sekundach
+      setTimeout(() => {
+        hostStartDiscussion();
+      }, 8000);
+    }
+
+    function hostStartDiscussion() {
+      document.getElementById('host-phase-title').innerText = "Faza Dyskusji";
+      document.getElementById('host-phase-desc').innerText = "Podajcie po kolei swoje skojarzenia!";
+      document.getElementById('host-discussion-box').classList.remove('hidden');
+
+      // Powiadom kontrolery o fazie dyskusji
+      players.forEach(p => p.conn.send({ type: 'PHASE_DISCUSSION' }));
+
+      // Timer dyskusji (60s)
+      let timeLeft = 60;
+      const timerEl = document.getElementById('discussion-timer');
+      const interval = setInterval(() => {
+        timeLeft--;
+        const mins = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+        const secs = String(timeLeft % 60).padStart(2, '0');
+        timerEl.innerText = `${mins}:${secs}`;
+
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          hostStartVoting();
+        }
+      }, 1000);
+    }
+
+    function hostStartVoting() {
+      document.getElementById('host-discussion-box').classList.add('hidden');
+      document.getElementById('host-phase-title').innerText = "Faza Głosowania";
+      document.getElementById('host-phase-desc').innerText = "Wskażcie podejrzanego na swoich telefonach!";
+      document.getElementById('host-voting-box').classList.remove('hidden');
+
+      const voteTargets = players.map(p => ({ id: p.id, name: p.name }));
+
+      // Wysyłamy listę do głosowania do kontrolerów
+      players.forEach(p => p.conn.send({ type: 'PHASE_VOTING', targets: voteTargets }));
+      updateHostVotesUI();
+    }
+
+    function updateHostVotesUI() {
+      const grid = document.getElementById('host-votes-grid');
+      grid.innerHTML = '';
+      
+      players.forEach(p => {
+        const hasVoted = p.votedFor !== null;
+        const box = document.createElement('div');
+        box.className = `p-4 rounded-xl border font-bold text-center ${hasVoted ? 'bg-emerald-950/40 border-emerald-700 text-emerald-400' : 'bg-slate-950 border-slate-800 text-slate-500'}`;
+        box.innerText = `${p.name} ${hasVoted ? '✓ (Zagłosowano)' : '...'}`;
+        grid.appendChild(box);
+      });
+
+      // Jeśli wszyscy zagłosowali -> Pokaż wyniki
+      if (players.length > 0 && players.every(p => p.votedFor !== null)) {
+        setTimeout(hostShowResults, 1500);
+      }
+    }
+
+    function hostShowResults() {
+      document.getElementById('host-voting-box').classList.add('hidden');
+      document.getElementById('host-phase-title').innerText = "Wyniki Rundy";
+      document.getElementById('host-results-box').classList.remove('hidden');
+
+      // Zliczanie głosów
+      const voteCounts = {};
+      players.forEach(p => {
+        if (p.votedFor) {
+          voteCounts[p.votedFor] = (voteCounts[p.votedFor] || 0) + 1;
+        }
+      });
+
+      // Powiadom graczy o końcu
+      players.forEach(p => p.conn.send({ type: 'PHASE_ENDED' }));
+
+      // Wyświetlenie ról i wyników
+      const revealGrid = document.getElementById('roles-reveal-grid');
+      revealGrid.innerHTML = '';
+      
+      players.forEach(p => {
+        const votesReceived = voteCounts[p.id] || 0;
+        const card = document.createElement('div');
+        card.className = "bg-slate-950 border border-slate-800 p-4 rounded-xl flex justify-between items-center";
+        card.innerHTML = `
+          <div>
+            <div class="font-bold text-slate-200">${p.name}</div>
+            <div class="text-xs text-red-400">Słowo: <span class="font-bold">${p.word}</span></div>
+          </div>
+          <div class="text-right">
+            <span class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-300 font-bold">${votesReceived} głosy/ów</span>
+          </div>
+        `;
+        revealGrid.appendChild(card);
+      });
+    }
+
+    function hostReturnToLobby() {
+      document.getElementById('host-arena').classList.add('hidden');
+      document.getElementById('host-results-box').classList.add('hidden');
+      document.getElementById('host-lobby').classList.remove('hidden');
+      renderHostPlayers();
+    }
+
+    // =========================================================================
+    // LOGIKA KONTROLERA (GRACZA)
+    // =========================================================================
+    function initPlayer() {
+      const pin = document.getElementById('input-pin').value.trim();
+      myNickname = document.getElementById('input-nickname').value.trim() || 'Gracz';
+
+      if (pin.length !== 4) return alert('Wpisz poprawny 4-cyfrowy PIN!');
+
+      peer = new Peer();
+
+      peer.on('open', (id) => {
+        myId = id;
+        const hostPeerId = 'imp-room-' + pin;
+        hostConn = peer.connect(hostPeerId);
+
+        hostConn.on('open', () => {
+          hostConn.send({ type: 'JOIN', nickname: myNickname });
+        });
+
+        hostConn.on('data', handlePlayerMessage);
+
+        hostConn.on('error', () => {
+          alert('Nie można połączyć się z tym pokojem.');
+        });
+      });
+    }
+
+    function handlePlayerMessage(data) {
+      if (data.type === 'JOIN_SUCCESS') {
+        showScreen('screen-player');
+        document.getElementById('player-nickname-display').innerText = data.nickname;
+      }
+      else if (data.type === 'GAME_START') {
+        // Pokaż widok odkrywania słowa
+        document.getElementById('player-view-reveal').classList.remove('hidden');
+        document.getElementById('player-view-discussion').classList.add('hidden');
+        document.getElementById('player-view-voting').classList.add('hidden');
+        document.getElementById('player-view-ended').classList.add('hidden');
+
+        document.getElementById('player-secret-word').innerText = data.word;
+        setupHoldButton();
+      }
+      else if (data.type === 'PHASE_DISCUSSION') {
+        document.getElementById('player-view-reveal').classList.add('hidden');
+        document.getElementById('player-view-discussion').classList.remove('hidden');
+      }
+      else if (data.type === 'PHASE_VOTING') {
+        document.getElementById('player-view-discussion').classList.add('hidden');
+        document.getElementById('player-view-voting').classList.remove('hidden');
+
+        renderPlayerVoteButtons(data.targets);
+      }
+      else if (data.type === 'PHASE_ENDED') {
+        document.getElementById('player-view-voting').classList.add('hidden');
+        document.getElementById('player-view-ended').classList.remove('hidden');
+      }
+    }
+
+    function setupHoldButton() {
+      const btn = document.getElementById('btn-hold-word');
+      const box = document.getElementById('player-word-display');
+
+      const show = () => { box.classList.remove('hidden'); btn.innerText = "PUSZCZ, ABY UKRYĆ"; };
+      const hide = () => { box.classList.add('hidden'); btn.innerText = "PRZYTRZYMAJ, ABY ZOBACZYĆ"; };
+
+      btn.onmousedown = show;
+      btn.onmouseup = hide;
+      btn.ontouchstart = (e) => { e.preventDefault(); show(); };
+      btn.ontouchend = (e) => { e.preventDefault(); hide(); };
+    }
+
+    function renderPlayerVoteButtons(targets) {
+      const container = document.getElementById('player-vote-buttons');
+      container.innerHTML = '';
+
+      targets.forEach(t => {
+        if (t.id === myId) return; // Nie głosuj na samego siebie
+        const btn = document.createElement('button');
+        btn.className = "w-full py-4 bg-slate-800 hover:bg-red-900/40 border border-slate-700 active:border-red-500 font-bold rounded-xl transition text-slate-200";
+        btn.innerText = t.name;
+        btn.onclick = () => {
+          hostConn.send({ type: 'VOTE', targetId: t.id });
+          container.innerHTML = `<div class="p-4 bg-emerald-950/40 border border-emerald-700 text-emerald-400 font-bold rounded-xl">Głos oddany na: ${t.name}</div>`;
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    // Automatyczne wypełnianie PINu z URL (jeśli skanowano QR kod)
+    window.onload = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const pin = urlParams.get('pin');
+      if (pin) {
+        document.getElementById('input-pin').value = pin;
+      }
+    };
+  </script>
+</body>
+</html>

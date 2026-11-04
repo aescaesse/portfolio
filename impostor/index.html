@@ -3,334 +3,378 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Impostor AirConsole - Token System</title>
+  <title>Impostor Party - TV & Phone Experience</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(245, 158, 11, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+    }
+    .speaker-active { animation: pulse-ring 2s infinite; }
+  </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4 select-none font-sans">
 
-  <!-- EKRAN GŁÓWNY -->
-  <div id="screen-welcome" class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl text-center space-y-6">
-    <div>
-      <h1 class="text-4xl font-extrabold text-red-500">IMPOSTOR</h1>
-      <p class="text-slate-400 text-sm mt-1">AirConsole Multi-Screen Experience</p>
-    </div>
-
-    <div class="space-y-3">
-      <button onclick="initHost()" class="w-full py-4 bg-red-600 hover:bg-red-500 font-bold rounded-2xl shadow-lg transition">
-        Stwórz Pokój (Ekran TV / Host)
-      </button>
-
-      <div class="relative flex py-2 items-center">
-        <div class="flex-grow border-t border-slate-800"></div>
-        <span class="flex-shrink mx-4 text-slate-500 text-xs font-semibold">LUB DOŁĄCZ TELEFONEM</span>
-        <div class="flex-grow border-t border-slate-800"></div>
-      </div>
-
-      <input type="text" id="input-nickname" placeholder="Twoje imię" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-center font-bold">
-      <input type="text" id="input-pin" maxlength="4" placeholder="4-cyfrowy PIN" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-center font-mono font-bold text-2xl uppercase">
-      <button onclick="initPlayer()" class="w-full py-4 bg-slate-800 hover:bg-slate-700 font-bold rounded-2xl border border-slate-700">
-        Dołącz do Gry (Kontroler)
-      </button>
-    </div>
-  </div>
-
-  <!-- EKRAN HOSTA (TV) -->
-  <div id="screen-host" class="hidden max-w-4xl w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-8">
+  <!-- ==================== MODE 1: EKRAN TV (DASHBOARD) ==================== -->
+  <div id="tv-dashboard" class="hidden w-full max-w-6xl bg-slate-900 border-2 border-slate-800 rounded-3xl p-8 shadow-2xl space-y-8">
     
-    <!-- LOBBY -->
-    <div id="host-lobby" class="space-y-8">
-      <div class="flex justify-between items-center pb-6 border-b border-slate-800">
+    <!-- TV: LOBBY -->
+    <div id="tv-lobby" class="space-y-8">
+      <div class="flex justify-between items-center bg-slate-950 p-6 rounded-2xl border border-slate-800">
         <div>
-          <span class="text-xs uppercase text-slate-400 font-semibold">PIN Pokoju</span>
-          <div id="host-pin-display" class="text-6xl font-black font-mono text-red-500">----</div>
+          <span class="text-sm uppercase tracking-widest text-slate-400 font-bold">Zeskanuj lub wpisz PIN na telefonie</span>
+          <div id="tv-pin-display" class="text-7xl font-black font-mono text-red-500 mt-1">----</div>
         </div>
-        <div class="bg-white p-3 rounded-2xl">
-          <div id="qrcode"></div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-4">
-          <h3 class="font-bold text-slate-300 text-sm uppercase">Gracze (<span id="player-count">0</span>)</h3>
-          <div id="host-players-list" class="grid grid-cols-2 gap-2"></div>
-        </div>
-        <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-4">
-          <h3 class="font-bold text-slate-300 text-sm uppercase">Ustawienia</h3>
-          <label class="text-xs text-slate-400 block">Liczba Impostorów</label>
-          <select id="setting-impostors" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 font-bold">
-            <option value="1">1 Impostor</option>
-            <option value="2">2 Impostorów</option>
-          </select>
+        <div class="bg-white p-4 rounded-2xl shadow-xl flex items-center gap-4">
+          <div id="tv-qrcode"></div>
+          <div class="text-slate-900 text-left">
+            <p class="font-extrabold text-lg">Dołącz do gry!</p>
+            <p class="text-xs text-slate-600">Aparat -> Skanuj QR</p>
+          </div>
         </div>
       </div>
 
-      <button id="btn-start-game" onclick="hostStartGame()" disabled class="w-full py-5 bg-red-600 disabled:opacity-40 font-black text-xl rounded-2xl">
-        ROZPOCZNIJ GRĘ
-      </button>
+      <div class="grid grid-cols-3 gap-6">
+        <!-- Połączeni gracze -->
+        <div class="col-span-2 bg-slate-950/80 p-6 rounded-2xl border border-slate-800">
+          <h3 class="text-slate-400 font-bold uppercase text-sm mb-4">Gracze w pokoju (<span id="tv-player-count">0</span>)</h3>
+          <div id="tv-players-grid" class="grid grid-cols-3 gap-3"></div>
+        </div>
+        <!-- Wyniki Scoringu -->
+        <div class="bg-slate-950/80 p-6 rounded-2xl border border-slate-800">
+          <h3 class="text-amber-400 font-bold uppercase text-sm mb-4">Klasyfikacja Meczowa</h3>
+          <div id="tv-scoreboard-mini" class="space-y-2 text-sm">
+            <p class="text-slate-500 text-xs italic">Wyniki pojawią się po 1. rundzie</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <p class="text-slate-400 text-sm mb-2">Gdy wszyscy dołączą, kliknij przycisk na dowolnym telefonie lub poniżej:</p>
+        <button onclick="hostStartGame()" id="tv-btn-start" disabled class="px-12 py-5 bg-red-600 disabled:opacity-30 font-black text-2xl rounded-2xl shadow-xl">
+          ROZPOCZNIJ MECZ
+        </button>
+      </div>
     </div>
 
-    <!-- ARENA HOSTA -->
-    <div id="host-arena" class="hidden space-y-8 text-center">
-      <div class="bg-slate-950 border border-slate-800 p-6 rounded-2xl">
-        <h2 id="host-phase-title" class="text-3xl font-black text-red-500 uppercase">Sprawdzanie Haseł</h2>
-        <p id="host-phase-desc" class="text-slate-400 mt-2">Gracze sprawdzają swoje słowa...</p>
+    <!-- TV: ARENA ROZGRYWKI -->
+    <div id="tv-arena" class="hidden space-y-8 text-center">
+      <!-- Baner fazy -->
+      <div id="tv-phase-banner" class="bg-slate-950 border border-slate-800 p-6 rounded-2xl">
+        <h2 id="tv-phase-title" class="text-4xl font-black text-red-500 uppercase">Sprawdzanie Haseł</h2>
+        <p id="tv-phase-desc" class="text-slate-400 mt-1">Gracze odczytują tajne słowa na swoich ekranach...</p>
       </div>
 
-      <!-- KTO MA TOKEN -->
-      <div id="host-turn-box" class="hidden bg-slate-950 p-8 rounded-2xl border border-amber-500/30 space-y-2">
-        <span class="text-xs uppercase text-amber-500 font-bold tracking-widest">Obecnie mówi</span>
-        <div id="current-speaker-name" class="text-5xl font-black text-amber-400">---</div>
+      <!-- KTO AKTUALNIE MÓWI (TOKEN) -->
+      <div id="tv-speaker-box" class="hidden bg-slate-950 p-12 rounded-3xl border-2 border-amber-500/50 speaker-active max-w-2xl mx-auto space-y-3">
+        <span class="text-sm uppercase text-amber-500 font-bold tracking-widest block">Teraz mówi:</span>
+        <div id="tv-speaker-name" class="text-6xl font-black text-amber-400">---</div>
+        <p class="text-slate-400 text-sm">Słuchajcie uwagi! Po wypowiedzi gracz przekazuje token na swoim telefonie.</p>
       </div>
 
-      <!-- WYNIKI / AKCJE -->
-      <div id="host-actions-box" class="hidden flex justify-center gap-4">
-        <button onclick="hostStartVoting()" class="py-4 px-8 bg-red-600 font-bold rounded-xl text-lg">Przejdź do Głosowania</button>
-        <button onclick="hostNextRound()" class="py-4 px-8 bg-slate-800 hover:bg-slate-700 font-bold rounded-xl text-lg border border-slate-700">Pomiń (Kolejna Runda Mowy)</button>
+      <!-- AKCJE PO RUNDZIE (VOTE / SKIP) -->
+      <div id="tv-round-actions" class="hidden flex justify-center gap-6">
+        <button onclick="hostStartVoting()" class="px-8 py-5 bg-red-600 font-black text-xl rounded-2xl">Przejdź do Głosowania</button>
+        <button onclick="hostNextRoundSpeech()" class="px-8 py-5 bg-slate-800 border border-slate-700 font-bold text-xl rounded-2xl">Kolejna Runda Mowy (Skip)</button>
       </div>
 
-      <!-- WYNIKI GŁOSOWANIA -->
-      <div id="host-results-box" class="hidden space-y-4">
-        <div id="roles-reveal-grid" class="grid grid-cols-2 gap-3 text-left"></div>
-        <button onclick="hostReturnToLobby()" class="py-4 px-8 bg-slate-800 font-bold rounded-xl mt-4">Wróć do Lobby</button>
+      <!-- TABLICA WYNIKÓW I RÓL (PODSUMOWANIE) -->
+      <div id="tv-results-box" class="hidden space-y-6 max-w-3xl mx-auto">
+        <h3 class="text-2xl font-extrabold text-amber-400">Tabela Punktowa Meczowa</h3>
+        <div id="tv-scoreboard-full" class="space-y-2"></div>
+        <button onclick="hostReturnToLobby()" class="px-8 py-4 bg-slate-800 font-bold rounded-xl border border-slate-700">Następna Runda</button>
       </div>
     </div>
   </div>
 
-  <!-- EKRAN GRACZA (KONTROLER) -->
-  <div id="screen-player" class="hidden max-w-sm w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl text-center space-y-6">
+  <!-- ==================== MODE 2: EKRAN TELEFONU (KONTROLER) ==================== -->
+  <div id="phone-controller" class="hidden max-w-sm w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl text-center space-y-6">
     <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-      <span id="player-nickname-display" class="font-bold text-slate-300">Gracz</span>
-      <span class="text-xs bg-emerald-950 text-emerald-400 px-2 py-1 rounded font-bold">Połączono</span>
+      <span id="phone-nickname" class="font-bold text-slate-200">Kontroler</span>
+      <span id="phone-status" class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-400">Rozłączony</span>
     </div>
 
-    <!-- ODKRYWANIE SŁOWA -->
-    <div id="player-view-reveal" class="space-y-6">
-      <button id="btn-hold-word" class="w-full py-16 bg-slate-800 border-2 border-dashed border-red-500/50 rounded-2xl font-bold text-lg select-none">
+    <!-- FORMULARZ DOŁĄCZANIA -->
+    <div id="phone-join-form" class="space-y-4">
+      <h2 class="text-2xl font-black text-red-500">DOŁĄCZ DO GRY</h2>
+      <input type="text" id="phone-input-name" placeholder="Twoje imię" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-center font-bold">
+      <input type="text" id="phone-input-pin" maxlength="4" placeholder="4-cyfrowy PIN z TV" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-center font-mono font-bold text-2xl uppercase">
+      <button onclick="connectAsPlayer()" class="w-full py-4 bg-red-600 font-bold rounded-2xl shadow-lg">Dołącz do TV</button>
+      
+      <div class="pt-4 border-t border-slate-800">
+        <button onclick="forceHostOnPhone()" class="text-xs text-slate-500 underline">Grajcie bez TV (Ten telefon jako Host)</button>
+      </div>
+    </div>
+
+    <!-- FAZA: ODKRYWANIE SŁOWA -->
+    <div id="phone-view-reveal" class="hidden space-y-6">
+      <button id="btn-hold" class="w-full py-16 bg-slate-800 border-2 border-dashed border-red-500/50 rounded-2xl font-bold text-lg select-none">
         PRZYTRZYMAJ, ABY ZOBACZYĆ
       </button>
-      <div id="player-word-display" class="hidden p-6 bg-slate-950 border border-slate-800 rounded-2xl">
-        <span class="text-xs text-slate-500 block uppercase">Twoje Hasło</span>
-        <span id="player-secret-word" class="text-2xl font-black text-red-400 mt-1 block">---</span>
+      <div id="phone-word-box" class="hidden p-6 bg-slate-950 border border-slate-800 rounded-2xl">
+        <span class="text-xs text-slate-500 uppercase block">Twoje Hasło</span>
+        <span id="phone-secret-word" class="text-2xl font-black text-red-400 mt-1 block">---</span>
       </div>
     </div>
 
-    <!-- WIDOK TOKENA (MOJA KOLEJ / CZEKANIE) -->
-    <div id="player-view-turn" class="hidden space-y-6">
-      <div id="turn-active-box" class="hidden space-y-4">
+    <!-- FAZA: TOKEN MOWY -->
+    <div id="phone-view-turn" class="hidden space-y-6">
+      <div id="phone-my-turn" class="hidden space-y-4">
         <div class="p-6 bg-amber-500/10 border border-amber-500 rounded-2xl">
           <span class="text-amber-400 font-black text-xl block">MASZ TOKEN!</span>
-          <p class="text-xs text-slate-300 mt-1">Powiedz jedno słowo kojarzące się z Twoim hasłem na głos.</p>
+          <p class="text-xs text-slate-300 mt-1">Powiedz słowo kojarzące się z hasłem i kliknij poniżej.</p>
         </div>
-        <button onclick="passToken()" class="w-full py-5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-lg rounded-2xl shadow-lg">
+        <button onclick="passSpeechToken()" class="w-full py-5 bg-amber-500 text-slate-950 font-black text-lg rounded-2xl shadow-lg">
           PRZEKAŻ TOKEN DALEJ
         </button>
       </div>
-
-      <div id="turn-wait-box" class="p-8 bg-slate-950 rounded-2xl border border-slate-800">
-        <span class="text-xs text-slate-500 uppercase font-bold block">Obecnie mówi:</span>
-        <span id="speaker-wait-name" class="text-2xl font-bold text-slate-200 mt-1 block">...</span>
+      <div id="phone-wait-turn" class="p-8 bg-slate-950 rounded-2xl border border-slate-800">
+        <span class="text-xs text-slate-500 uppercase font-bold block">Teraz mówi:</span>
+        <span id="phone-speaker-name" class="text-2xl font-bold text-slate-200 mt-1 block">...</span>
       </div>
     </div>
 
-    <!-- GŁOSOWANIE -->
-    <div id="player-view-voting" class="hidden space-y-4">
-      <h3 class="text-lg font-bold text-slate-200">Głosowanie na Impostora</h3>
-      <div id="player-vote-buttons" class="space-y-2"></div>
+    <!-- FAZA: GŁOSOWANIE -->
+    <div id="phone-view-voting" class="hidden space-y-4">
+      <h3 class="text-lg font-bold text-slate-200">Głosuj na Impostora</h3>
+      <div id="phone-vote-btns" class="space-y-2"></div>
     </div>
   </div>
 
   <script>
-    const wordDatabase = [
+    // Słownik haseł (Większość vs Impostor)
+    const wordPairs = [
       ["Kawa", "Herbata"], ["Pies", "Kot"], ["Samochód", "Motocykl"], 
-      ["Kino", "Teatr"], ["Pizza", "Burger"], ["Zima", "Lato"]
+      ["Kino", "Teatr"], ["Pizza", "Burger"], ["Zima", "Lato"], ["Słońce", "Księżyc"]
     ];
 
     let peer = null;
+    let isTV = false;
     let hostConn = null;
     let myId = "";
-    let players = []; 
+    
+    // Stan Hosta
+    let players = []; // { id, conn, name, word, isImpostor, score, votedFor }
     let turnOrder = [];
-    let currentTurnIndex = 0;
+    let currentTurnIdx = 0;
 
-    function showScreen(id) {
-      document.querySelectorAll('#screen-welcome, #screen-host, #screen-player').forEach(e => e.classList.add('hidden'));
-      document.getElementById(id).classList.remove('hidden');
-    }
+    // Automatyczna Detekcja Urządzenia
+    window.onload = () => {
+      const ua = navigator.userAgent.toLowerCase();
+      const isSmartTV = ua.includes("smart-tv") || ua.includes("tizen") || ua.includes("webos") || ua.includes("appletv") || ua.includes("googletv");
+      const isLargeScreen = window.innerWidth >= 1024;
 
-    function generatePin() { return Math.floor(1000 + Math.random() * 9000).toString(); }
+      const urlParams = new URLSearchParams(window.location.search);
+      const pinParam = urlParams.get('pin');
 
-    // HOSTA LOGIKA
-    function initHost() {
-      const pin = generatePin();
+      if ((isSmartTV || isLargeScreen) && !pinParam) {
+        // Uruchom jako Ekran TV
+        isTV = true;
+        document.getElementById('tv-dashboard').classList.remove('hidden');
+        initTVHost();
+      } else {
+        // Uruchom jako Kontroler Telefoniczny
+        isTV = false;
+        document.getElementById('phone-controller').classList.remove('hidden');
+        if (pinParam) document.getElementById('phone-input-pin').value = pinParam;
+      }
+    };
+
+    // LOGIKA HOSTA (TV)
+    function initTVHost(customPin = null) {
+      const pin = customPin || Math.floor(1000 + Math.random() * 9000).toString();
       peer = new Peer('imp-room-' + pin);
 
       peer.on('open', () => {
-        showScreen('screen-host');
-        document.getElementById('host-pin-display').innerText = pin;
-        document.getElementById('qrcode').innerHTML = "";
-        new QRCode(document.getElementById('qrcode'), { text: window.location.href.split('?')[0] + '?pin=' + pin, width: 128, height: 128 });
+        document.getElementById('tv-pin-display').innerText = pin;
+        document.getElementById('tv-qrcode').innerHTML = "";
+        const url = window.location.href.split('?')[0] + '?pin=' + pin;
+        new QRCode(document.getElementById('tv-qrcode'), { text: url, width: 100, height: 100 });
       });
 
       peer.on('connection', (conn) => {
-        conn.on('data', (data) => handleHostMessage(conn, data));
+        conn.on('data', (data) => handleHostData(conn, data));
         conn.on('close', () => {
           players = players.filter(p => p.id !== conn.peer);
-          renderHostPlayers();
+          renderTVPlayers();
         });
       });
     }
 
-    function handleHostMessage(conn, data) {
+    function handleHostData(conn, data) {
       if (data.type === 'JOIN') {
-        players.push({ id: conn.peer, conn: conn, name: data.nickname, word: '', votedFor: null });
-        renderHostPlayers();
-        conn.send({ type: 'JOIN_SUCCESS', nickname: data.nickname });
-      } else if (data.type === 'TOKEN_PASSED') {
-        hostNextTurn();
+        players.push({ id: conn.peer, conn: conn, name: data.name, word: '', isImpostor: false, score: 0, votedFor: null });
+        renderTVPlayers();
+        conn.send({ type: 'JOIN_OK', name: data.name });
+      } else if (data.type === 'TOKEN_PASS') {
+        advanceTurn();
       } else if (data.type === 'VOTE') {
         const p = players.find(x => x.id === conn.peer);
         if (p) p.votedFor = data.targetId;
-        if (players.every(p => p.votedFor !== null)) hostShowResults();
+        if (players.every(x => x.votedFor !== null)) processVoteResults();
       }
     }
 
-    function renderHostPlayers() {
-      const list = document.getElementById('host-players-list');
-      list.innerHTML = players.map(p => `<div class="bg-slate-900 p-2 rounded-xl text-center font-bold text-sm">${p.name}</div>`).join('');
-      document.getElementById('player-count').innerText = players.length;
-      document.getElementById('btn-start-game').disabled = players.length < 3;
+    function renderTVPlayers() {
+      const grid = document.getElementById('tv-players-grid');
+      grid.innerHTML = players.map(p => `
+        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl font-bold text-center">
+          ${p.name}
+          <div class="text-xs text-amber-400 mt-1">${p.score} pkt</div>
+        </div>
+      `).join('');
+      document.getElementById('tv-player-count').innerText = players.length;
+      document.getElementById('tv-btn-start').disabled = players.length < 3;
     }
 
     function hostStartGame() {
-      const pair = wordDatabase[Math.floor(Math.random() * wordDatabase.length)];
+      const pair = wordPairs[Math.floor(Math.random() * wordPairs.length)];
       const impostorIdx = Math.floor(Math.random() * players.length);
 
       players.forEach((p, idx) => {
-        p.word = (idx === impostorIdx) ? pair[1] : pair[0];
+        p.isImpostor = (idx === impostorIdx);
+        p.word = p.isImpostor ? pair[1] : pair[0];
         p.votedFor = null;
         p.conn.send({ type: 'GAME_START', word: p.word });
       });
 
-      document.getElementById('host-lobby').classList.add('hidden');
-      document.getElementById('host-arena').classList.remove('hidden');
+      document.getElementById('tv-lobby').classList.add('hidden');
+      document.getElementById('tv-arena').classList.remove('hidden');
 
-      setTimeout(() => hostStartDiscussion(), 6000);
+      setTimeout(() => startSpeechPhase(), 5000);
     }
 
-    function hostStartDiscussion() {
-      // Losujemy kolejność mowy
+    function startSpeechPhase() {
       turnOrder = [...players].sort(() => Math.random() - 0.5);
-      currentTurnIndex = 0;
+      currentTurnIdx = 0;
 
-      document.getElementById('host-phase-title').innerText = "Runda Mowy";
-      document.getElementById('host-phase-desc').innerText = "Gracze przekazują sobie token mowy...";
-      document.getElementById('host-turn-box').classList.remove('hidden');
-      
-      notifyTurnSpeaker();
+      document.getElementById('tv-phase-title').innerText = "Runda Mowy";
+      document.getElementById('tv-phase-desc').innerText = "Obecny gracz podaje jedno skojarzenie do swojego słowa.";
+      document.getElementById('tv-speaker-box').classList.remove('hidden');
+
+      updateSpeakerUI();
     }
 
-    function notifyTurnSpeaker() {
-      const currentSpeaker = turnOrder[currentTurnIndex];
-      document.getElementById('current-speaker-name').innerText = currentSpeaker.name;
+    function updateSpeakerUI() {
+      const current = turnOrder[currentTurnIdx];
+      document.getElementById('tv-speaker-name').innerText = current.name;
 
       players.forEach(p => {
-        p.conn.send({ 
-          type: 'TURN_UPDATE', 
-          speakerName: currentSpeaker.name, 
-          isMyTurn: p.id === currentSpeaker.id 
-        });
+        p.conn.send({ type: 'TURN_UPDATE', speaker: current.name, isMe: p.id === current.id });
       });
     }
 
-    function hostNextTurn() {
-      currentTurnIndex++;
-      if (currentTurnIndex < turnOrder.length) {
-        notifyTurnSpeaker();
+    function advanceTurn() {
+      currentTurnIdx++;
+      if (currentTurnIdx < turnOrder.length) {
+        updateSpeakerUI();
       } else {
-        // Każdy wypowiedział się w tej rundzie
-        document.getElementById('host-turn-box').classList.add('hidden');
-        document.getElementById('host-actions-box').classList.remove('hidden');
-        document.getElementById('host-phase-title').innerText = "Koniec Rundy Mowy";
-        document.getElementById('host-phase-desc').innerText = "Możecie przejść do głosowania lub rozegrać kolejną rundę.";
+        document.getElementById('tv-speaker-box').classList.add('hidden');
+        document.getElementById('tv-round-actions').classList.remove('hidden');
+        document.getElementById('tv-phase-title').innerText = "Koniec Wypowiedzi";
       }
     }
 
-    function hostNextRound() {
-      document.getElementById('host-actions-box').classList.add('hidden');
-      hostStartDiscussion();
+    function hostNextRoundSpeech() {
+      document.getElementById('tv-round-actions').classList.add('hidden');
+      startSpeechPhase();
     }
 
     function hostStartVoting() {
-      document.getElementById('host-actions-box').classList.add('hidden');
-      document.getElementById('host-phase-title').innerText = "Głosowanie";
-      document.getElementById('host-phase-desc').innerText = "Wskazywanie Impostora na telefonach...";
+      document.getElementById('tv-round-actions').classList.add('hidden');
+      document.getElementById('tv-phase-title').innerText = "Głosowanie";
+      document.getElementById('tv-phase-desc').innerText = "Wskażcie Impostora na ekranach telefonów!";
 
       const targets = players.map(p => ({ id: p.id, name: p.name }));
       players.forEach(p => p.conn.send({ type: 'PHASE_VOTING', targets: targets }));
     }
 
-    function hostShowResults() {
-      document.getElementById('host-phase-title').innerText = "Wyniki";
-      document.getElementById('host-results-box').classList.remove('hidden');
+    function processVoteResults() {
+      // Naliczanie punktów (Scoring System)
+      const impostor = players.find(p => p.isImpostor);
+      
+      players.forEach(p => {
+        if (!p.isImpostor && p.votedFor === impostor.id) p.score += 10; // Cywil trafił
+        if (p.isImpostor) {
+          const votesAgainstImpostor = players.filter(x => x.votedFor === impostor.id).length;
+          if (votesAgainstImpostor < (players.length / 2)) p.score += 25; // Impostor wygrał
+        }
+      });
 
-      const grid = document.getElementById('roles-reveal-grid');
-      grid.innerHTML = players.map(p => `
-        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-          <div class="font-bold text-slate-200">${p.name}</div>
-          <div class="text-xs text-red-400">Hasło: <b>${p.word}</b></div>
+      document.getElementById('tv-phase-title').innerText = "Wyniki i Punkty";
+      document.getElementById('tv-results-box').classList.remove('hidden');
+
+      // Sortowanie według punktów
+      players.sort((a, b) => b.score - a.score);
+
+      const fullScoreboard = document.getElementById('tv-scoreboard-full');
+      fullScoreboard.innerHTML = players.map((p, idx) => `
+        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex justify-between items-center">
+          <div>
+            <span class="font-bold text-amber-400">#${idx + 1}</span>
+            <span class="font-bold text-slate-200 ml-2">${p.name}</span>
+            <span class="text-xs text-red-400 ml-2">(${p.isImpostor ? 'Impostor' : 'Cywil'}: ${p.word})</span>
+          </div>
+          <span class="font-black text-xl text-amber-400">${p.score} pkt</span>
         </div>
       `).join('');
+
+      players.forEach(p => p.conn.send({ type: 'PHASE_ENDED' }));
     }
 
     function hostReturnToLobby() {
-      document.getElementById('host-arena').classList.add('hidden');
-      document.getElementById('host-results-box').classList.add('hidden');
-      document.getElementById('host-lobby').classList.remove('hidden');
+      document.getElementById('tv-arena').classList.add('hidden');
+      document.getElementById('tv-results-box').classList.add('hidden');
+      document.getElementById('tv-lobby').classList.remove('hidden');
+      renderTVPlayers();
     }
 
-    // KONTROLER (GRACZ)
-    function initPlayer() {
-      const pin = document.getElementById('input-pin').value.trim();
-      const nickname = document.getElementById('input-nickname').value.trim() || 'Gracz';
+    // LOGIKA KONTROLERA (TELEFON)
+    function connectAsPlayer() {
+      const pin = document.getElementById('phone-input-pin').value.trim();
+      const name = document.getElementById('phone-input-name').value.trim() || 'Gracz';
 
       peer = new Peer();
       peer.on('open', (id) => {
         myId = id;
         hostConn = peer.connect('imp-room-' + pin);
-        hostConn.on('open', () => hostConn.send({ type: 'JOIN', nickname: nickname }));
-        hostConn.on('data', handlePlayerMessage);
+        hostConn.on('open', () => hostConn.send({ type: 'JOIN', name: name }));
+        hostConn.on('data', handlePlayerData);
       });
     }
 
-    function handlePlayerMessage(data) {
-      if (data.type === 'JOIN_SUCCESS') {
-        showScreen('screen-player');
-        document.getElementById('player-nickname-display').innerText = data.nickname;
+    function handlePlayerData(data) {
+      if (data.type === 'JOIN_OK') {
+        document.getElementById('phone-join-form').classList.add('hidden');
+        document.getElementById('phone-nickname').innerText = data.name;
+        document.getElementById('phone-status').innerText = "Połączono";
+        document.getElementById('phone-status').className = "text-xs bg-emerald-950 text-emerald-400 px-2 py-1 rounded font-bold";
       } else if (data.type === 'GAME_START') {
-        document.getElementById('player-view-reveal').classList.remove('hidden');
-        document.getElementById('player-view-turn').classList.add('hidden');
-        document.getElementById('player-view-voting').classList.add('hidden');
-        document.getElementById('player-secret-word').innerText = data.word;
-        setupHoldButton();
+        document.getElementById('phone-view-reveal').classList.remove('hidden');
+        document.getElementById('phone-view-turn').classList.add('hidden');
+        document.getElementById('phone-view-voting').classList.add('hidden');
+        document.getElementById('phone-secret-word').innerText = data.word;
+        setupHoldBtn();
       } else if (data.type === 'TURN_UPDATE') {
-        document.getElementById('player-view-reveal').classList.add('hidden');
-        document.getElementById('player-view-turn').classList.remove('hidden');
+        document.getElementById('phone-view-reveal').classList.add('hidden');
+        document.getElementById('phone-view-turn').classList.remove('hidden');
 
-        if (data.isMyTurn) {
-          document.getElementById('turn-active-box').classList.remove('hidden');
-          document.getElementById('turn-wait-box').classList.add('hidden');
+        if (data.isMe) {
+          document.getElementById('phone-my-turn').classList.remove('hidden');
+          document.getElementById('phone-wait-turn').classList.add('hidden');
         } else {
-          document.getElementById('turn-active-box').classList.add('hidden');
-          document.getElementById('turn-wait-box').classList.remove('hidden');
-          document.getElementById('speaker-wait-name').innerText = data.speakerName;
+          document.getElementById('phone-my-turn').classList.add('hidden');
+          document.getElementById('phone-wait-turn').classList.remove('hidden');
+          document.getElementById('phone-speaker-name').innerText = data.speaker;
         }
       } else if (data.type === 'PHASE_VOTING') {
-        document.getElementById('player-view-turn').classList.add('hidden');
-        document.getElementById('player-view-voting').classList.remove('hidden');
+        document.getElementById('phone-view-turn').classList.add('hidden');
+        document.getElementById('phone-view-voting').classList.remove('hidden');
 
-        const container = document.getElementById('player-vote-buttons');
+        const container = document.getElementById('phone-vote-btns');
         container.innerHTML = '';
         data.targets.forEach(t => {
           if (t.id === myId) return;
@@ -339,30 +383,29 @@
           btn.innerText = t.name;
           btn.onclick = () => {
             hostConn.send({ type: 'VOTE', targetId: t.id });
-            container.innerHTML = `<div class="p-4 bg-emerald-950 text-emerald-400 font-bold rounded-xl">Oddano głos na: ${t.name}</div>`;
+            container.innerHTML = `<div class="p-4 bg-emerald-950 text-emerald-400 font-bold rounded-xl">Głos oddany na: ${t.name}</div>`;
           };
           container.appendChild(btn);
         });
       }
     }
 
-    function passToken() {
-      hostConn.send({ type: 'TOKEN_PASSED' });
-    }
+    function passSpeechToken() { hostConn.send({ type: 'TOKEN_PASS' }); }
 
-    function setupHoldButton() {
-      const btn = document.getElementById('btn-hold-word');
-      const box = document.getElementById('player-word-display');
+    function setupHoldBtn() {
+      const btn = document.getElementById('btn-hold');
+      const box = document.getElementById('phone-word-box');
       btn.onmousedown = () => box.classList.remove('hidden');
       btn.onmouseup = () => box.classList.add('hidden');
       btn.ontouchstart = (e) => { e.preventDefault(); box.classList.remove('hidden'); };
       btn.ontouchend = (e) => { e.preventDefault(); box.classList.add('hidden'); };
     }
 
-    window.onload = () => {
-      const pin = new URLSearchParams(window.location.search).get('pin');
-      if (pin) document.getElementById('input-pin').value = pin;
-    };
+    function forceHostOnPhone() {
+      document.getElementById('phone-controller').classList.add('hidden');
+      document.getElementById('tv-dashboard').classList.remove('hidden');
+      initTVHost();
+    }
   </script>
 </body>
 </html>

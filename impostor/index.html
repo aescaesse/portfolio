@@ -18,7 +18,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4 select-none font-sans">
 
-  <!-- ==================== MODE 1: EKRAN TV (DASHBOARD) ==================== -->
+  <!-- ==================== EKRAN TV (DASHBOARD) ==================== -->
   <div id="tv-dashboard" class="hidden w-full max-w-6xl bg-slate-900 border-2 border-slate-800 rounded-3xl p-8 shadow-2xl space-y-8">
     
     <!-- TV: LOBBY -->
@@ -38,12 +38,10 @@
       </div>
 
       <div class="grid grid-cols-3 gap-6">
-        <!-- Połączeni gracze -->
         <div class="col-span-2 bg-slate-950/80 p-6 rounded-2xl border border-slate-800">
           <h3 class="text-slate-400 font-bold uppercase text-sm mb-4">Gracze w pokoju (<span id="tv-player-count">0</span>)</h3>
           <div id="tv-players-grid" class="grid grid-cols-3 gap-3"></div>
         </div>
-        <!-- Wyniki Scoringu -->
         <div class="bg-slate-950/80 p-6 rounded-2xl border border-slate-800">
           <h3 class="text-amber-400 font-bold uppercase text-sm mb-4">Klasyfikacja Meczowa</h3>
           <div id="tv-scoreboard-mini" class="space-y-2 text-sm">
@@ -53,7 +51,7 @@
       </div>
 
       <div class="text-center">
-        <p class="text-slate-400 text-sm mb-2">Gdy wszyscy dołączą, kliknij przycisk na dowolnym telefonie lub poniżej:</p>
+        <p class="text-slate-400 text-sm mb-2">Gdy wszyscy dołączą, kliknij przycisk:</p>
         <button onclick="hostStartGame()" id="tv-btn-start" disabled class="px-12 py-5 bg-red-600 disabled:opacity-30 font-black text-2xl rounded-2xl shadow-xl">
           ROZPOCZNIJ MECZ
         </button>
@@ -62,26 +60,22 @@
 
     <!-- TV: ARENA ROZGRYWKI -->
     <div id="tv-arena" class="hidden space-y-8 text-center">
-      <!-- Baner fazy -->
       <div id="tv-phase-banner" class="bg-slate-950 border border-slate-800 p-6 rounded-2xl">
         <h2 id="tv-phase-title" class="text-4xl font-black text-red-500 uppercase">Sprawdzanie Haseł</h2>
         <p id="tv-phase-desc" class="text-slate-400 mt-1">Gracze odczytują tajne słowa na swoich ekranach...</p>
       </div>
 
-      <!-- KTO AKTUALNIE MÓWI (TOKEN) -->
       <div id="tv-speaker-box" class="hidden bg-slate-950 p-12 rounded-3xl border-2 border-amber-500/50 speaker-active max-w-2xl mx-auto space-y-3">
         <span class="text-sm uppercase text-amber-500 font-bold tracking-widest block">Teraz mówi:</span>
         <div id="tv-speaker-name" class="text-6xl font-black text-amber-400">---</div>
-        <p class="text-slate-400 text-sm">Słuchajcie uwagi! Po wypowiedzi gracz przekazuje token na swoim telefonie.</p>
+        <p class="text-slate-400 text-sm">Słuchajcie uważnie! Po wypowiedzi gracz przekazuje token na swoim telefonie.</p>
       </div>
 
-      <!-- AKCJE PO RUNDZIE (VOTE / SKIP) -->
       <div id="tv-round-actions" class="hidden flex justify-center gap-6">
         <button onclick="hostStartVoting()" class="px-8 py-5 bg-red-600 font-black text-xl rounded-2xl">Przejdź do Głosowania</button>
         <button onclick="hostNextRoundSpeech()" class="px-8 py-5 bg-slate-800 border border-slate-700 font-bold text-xl rounded-2xl">Kolejna Runda Mowy (Skip)</button>
       </div>
 
-      <!-- TABLICA WYNIKÓW I RÓL (PODSUMOWANIE) -->
       <div id="tv-results-box" class="hidden space-y-6 max-w-3xl mx-auto">
         <h3 class="text-2xl font-extrabold text-amber-400">Tabela Punktowa Meczowa</h3>
         <div id="tv-scoreboard-full" class="space-y-2"></div>
@@ -90,14 +84,13 @@
     </div>
   </div>
 
-  <!-- ==================== MODE 2: EKRAN TELEFONU (KONTROLER) ==================== -->
+  <!-- ==================== EKRAN TELEFONU (KONTROLER) ==================== -->
   <div id="phone-controller" class="hidden max-w-sm w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl text-center space-y-6">
     <div class="flex justify-between items-center border-b border-slate-800 pb-3">
       <span id="phone-nickname" class="font-bold text-slate-200">Kontroler</span>
       <span id="phone-status" class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-400">Rozłączony</span>
     </div>
 
-    <!-- FORMULARZ DOŁĄCZANIA -->
     <div id="phone-join-form" class="space-y-4">
       <h2 class="text-2xl font-black text-red-500">DOŁĄCZ DO GRY</h2>
       <input type="text" id="phone-input-name" placeholder="Twoje imię" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-center font-bold">
@@ -109,7 +102,6 @@
       </div>
     </div>
 
-    <!-- FAZA: ODKRYWANIE SŁOWA -->
     <div id="phone-view-reveal" class="hidden space-y-6">
       <button id="btn-hold" class="w-full py-16 bg-slate-800 border-2 border-dashed border-red-500/50 rounded-2xl font-bold text-lg select-none">
         PRZYTRZYMAJ, ABY ZOBACZYĆ
@@ -120,7 +112,6 @@
       </div>
     </div>
 
-    <!-- FAZA: TOKEN MOWY -->
     <div id="phone-view-turn" class="hidden space-y-6">
       <div id="phone-my-turn" class="hidden space-y-4">
         <div class="p-6 bg-amber-500/10 border border-amber-500 rounded-2xl">
@@ -137,7 +128,6 @@
       </div>
     </div>
 
-    <!-- FAZA: GŁOSOWANIE -->
     <div id="phone-view-voting" class="hidden space-y-4">
       <h3 class="text-lg font-bold text-slate-200">Głosuj na Impostora</h3>
       <div id="phone-vote-btns" class="space-y-2"></div>
@@ -145,10 +135,24 @@
   </div>
 
   <script>
-    // Słownik haseł (Większość vs Impostor)
+    // Podkręcona, mocniejsza baza haseł imprezowych
     const wordPairs = [
-      ["Kawa", "Herbata"], ["Pies", "Kot"], ["Samochód", "Motocykl"], 
-      ["Kino", "Teatr"], ["Pizza", "Burger"], ["Zima", "Lato"], ["Słońce", "Księżyc"]
+      ["Kac", "Zawał serca"],
+      ["Piwko po robocie", "Rozwód"],
+      ["Teściowa", "Więzienie o zaostrzonym rygorze"],
+      ["Kredyt hipoteczny", "Dożywocie"],
+      ["Ex (Była/Były)", "Katastrofa budowlana"],
+      ["Szef w poniedziałek rano", "Seryjny morderca"],
+      ["Wizyta u dentysty", "Tortury średniowieczne"],
+      ["Klocek Lego", "Mina przeciwpiechotna"],
+      ["Kot", "Mały dyktator"],
+      ["Energetyk", "Legalna amfetamina"],
+      ["Poniedziałek", "Dzień sądu ostatecznego"],
+      ["Inst histórias na Insta", "Ekshibicjonizm"],
+      ["Darmowe jedzenie", "Walka o przetrwanie"],
+      ["Kawa", "Kokaina"],
+      ["Smartfon", "Smycz na całe życie"],
+      ["Zakupy w Biedronce", "Wyprawa w nieznane"]
     ];
 
     let peer = null;
@@ -156,12 +160,10 @@
     let hostConn = null;
     let myId = "";
     
-    // Stan Hosta
-    let players = []; // { id, conn, name, word, isImpostor, score, votedFor }
+    let players = []; 
     let turnOrder = [];
     let currentTurnIdx = 0;
 
-    // Automatyczna Detekcja Urządzenia
     window.onload = () => {
       const ua = navigator.userAgent.toLowerCase();
       const isSmartTV = ua.includes("smart-tv") || ua.includes("tizen") || ua.includes("webos") || ua.includes("appletv") || ua.includes("googletv");
@@ -171,19 +173,16 @@
       const pinParam = urlParams.get('pin');
 
       if ((isSmartTV || isLargeScreen) && !pinParam) {
-        // Uruchom jako Ekran TV
         isTV = true;
         document.getElementById('tv-dashboard').classList.remove('hidden');
         initTVHost();
       } else {
-        // Uruchom jako Kontroler Telefoniczny
         isTV = false;
         document.getElementById('phone-controller').classList.remove('hidden');
         if (pinParam) document.getElementById('phone-input-pin').value = pinParam;
       }
     };
 
-    // LOGIKA HOSTA (TV)
     function initTVHost(customPin = null) {
       const pin = customPin || Math.floor(1000 + Math.random() * 9000).toString();
       peer = new Peer('imp-room-' + pin);
@@ -293,21 +292,19 @@
     }
 
     function processVoteResults() {
-      // Naliczanie punktów (Scoring System)
       const impostor = players.find(p => p.isImpostor);
       
       players.forEach(p => {
-        if (!p.isImpostor && p.votedFor === impostor.id) p.score += 10; // Cywil trafił
+        if (!p.isImpostor && p.votedFor === impostor.id) p.score += 10;
         if (p.isImpostor) {
           const votesAgainstImpostor = players.filter(x => x.votedFor === impostor.id).length;
-          if (votesAgainstImpostor < (players.length / 2)) p.score += 25; // Impostor wygrał
+          if (votesAgainstImpostor < (players.length / 2)) p.score += 25;
         }
       });
 
       document.getElementById('tv-phase-title').innerText = "Wyniki i Punkty";
       document.getElementById('tv-results-box').classList.remove('hidden');
 
-      // Sortowanie według punktów
       players.sort((a, b) => b.score - a.score);
 
       const fullScoreboard = document.getElementById('tv-scoreboard-full');
@@ -332,7 +329,6 @@
       renderTVPlayers();
     }
 
-    // LOGIKA KONTROLERA (TELEFON)
     function connectAsPlayer() {
       const pin = document.getElementById('phone-input-pin').value.trim();
       const name = document.getElementById('phone-input-name').value.trim() || 'Gracz';

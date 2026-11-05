@@ -2,8 +2,8 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Impostor Party - TV & Phone Experience</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Impostor Party - Fully Responsive</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -16,76 +16,92 @@
     .speaker-active { animation: pulse-ring 2s infinite; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4 select-none font-sans">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center p-3 sm:p-6 select-none font-sans overflow-x-hidden">
 
-  <!-- ==================== EKRAN TV (DASHBOARD) ==================== -->
-  <div id="tv-dashboard" class="hidden w-full max-w-6xl bg-slate-900 border-2 border-slate-800 rounded-3xl p-8 shadow-2xl space-y-8">
+  <!-- ==================== EKRAN HOSTA (TV / DASHBOARD HOSTA ON PHONE) ==================== -->
+  <div id="tv-dashboard" class="hidden w-full max-w-5xl bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-2xl space-y-6 sm:space-y-8">
     
-    <!-- TV: LOBBY -->
-    <div id="tv-lobby" class="space-y-8">
-      <div class="flex justify-between items-center bg-slate-950 p-6 rounded-2xl border border-slate-800">
-        <div>
-          <span class="text-sm uppercase tracking-widest text-slate-400 font-bold">Zeskanuj lub wpisz PIN na telefonie</span>
-          <div id="tv-pin-display" class="text-7xl font-black font-mono text-red-500 mt-1">----</div>
+    <!-- LOBBY HOSTA -->
+    <div id="tv-lobby" class="space-y-6 sm:space-y-8">
+      <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-950 p-4 sm:p-6 rounded-2xl border border-slate-800 gap-4">
+        <div class="text-center sm:text-left">
+          <span class="text-xs sm:text-sm uppercase tracking-widest text-slate-400 font-bold block">PIN Pokoju</span>
+          <div id="tv-pin-display" class="text-5xl sm:text-7xl font-black font-mono text-red-500 mt-1">----</div>
         </div>
-        <div class="bg-white p-4 rounded-2xl shadow-xl flex items-center gap-4">
-          <div id="tv-qrcode"></div>
-          <div class="text-slate-900 text-left">
-            <p class="font-extrabold text-lg">Dołącz do gry!</p>
-            <p class="text-xs text-slate-600">Aparat -> Skanuj QR</p>
+        <div class="bg-white p-3 sm:p-4 rounded-2xl shadow-xl flex items-center gap-3">
+          <div id="tv-qrcode" class="w-20 h-20 sm:w-24 sm:h-24"></div>
+          <div class="text-slate-900 text-left hidden sm:block">
+            <p class="font-extrabold text-sm sm:text-lg">Dołącz do gry!</p>
+            <p class="text-xs text-slate-600">Skanuj aparatów</p>
           </div>
         </div>
       </div>
 
-      <div class="grid grid-cols-3 gap-6">
-        <div class="col-span-2 bg-slate-950/80 p-6 rounded-2xl border border-slate-800">
-          <h3 class="text-slate-400 font-bold uppercase text-sm mb-4">Gracze w pokoju (<span id="tv-player-count">0</span>)</h3>
-          <div id="tv-players-grid" class="grid grid-cols-3 gap-3"></div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        <!-- Połączeni gracze -->
+        <div class="lg:col-span-2 bg-slate-950/80 p-4 sm:p-6 rounded-2xl border border-slate-800">
+          <h3 class="text-slate-400 font-bold uppercase text-xs sm:text-sm mb-3 sm:mb-4">Gracze w pokoju (<span id="tv-player-count">0</span>)</h3>
+          <div id="tv-players-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3"></div>
         </div>
-        <div class="bg-slate-950/80 p-6 rounded-2xl border border-slate-800">
-          <h3 class="text-amber-400 font-bold uppercase text-sm mb-4">Klasyfikacja Meczowa</h3>
-          <div id="tv-scoreboard-mini" class="space-y-2 text-sm">
-            <p class="text-slate-500 text-xs italic">Wyniki pojawią się po 1. rundzie</p>
+
+        <!-- Ustawienia Gry -->
+        <div class="bg-slate-950/80 p-4 sm:p-6 rounded-2xl border border-slate-800 space-y-3 sm:space-y-4">
+          <h3 class="text-amber-400 font-bold uppercase text-xs sm:text-sm border-b border-slate-800 pb-2">Ustawienia Meczu</h3>
+          
+          <div>
+            <label class="text-xs text-slate-400 font-bold block mb-1">Liczba Impostorów:</label>
+            <select id="setting-impostors" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 font-bold text-xs sm:text-sm text-slate-100">
+              <option value="1">1 Impostor</option>
+              <option value="2">2 Impostorów</option>
+              <option value="3">3 Impostorów</option>
+              <option value="random">🎲 Losowa liczba (1 do max)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-xs text-slate-400 font-bold block mb-1">Tryb Słów:</label>
+            <select id="setting-word-mode" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 font-bold text-xs sm:text-sm text-slate-100">
+              <option value="classic">Standardowy (Jedno słowo dla cywili)</option>
+              <option value="chaos">Chaos (Różne podobne słowa)</option>
+            </select>
           </div>
         </div>
       </div>
 
-      <div class="text-center">
-        <p class="text-slate-400 text-sm mb-2">Gdy wszyscy dołączą, kliknij przycisk:</p>
-        <button onclick="hostStartGame()" id="tv-btn-start" disabled class="px-12 py-5 bg-red-600 disabled:opacity-30 font-black text-2xl rounded-2xl shadow-xl">
+      <div class="text-center pt-2">
+        <button onclick="hostStartGame()" id="tv-btn-start" disabled class="w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-5 bg-red-600 disabled:opacity-30 font-black text-lg sm:text-2xl rounded-2xl shadow-xl transition active:scale-95">
           ROZPOCZNIJ MECZ
         </button>
       </div>
     </div>
 
-    <!-- TV: ARENA ROZGRYWKI -->
-    <div id="tv-arena" class="hidden space-y-8 text-center">
-      <div id="tv-phase-banner" class="bg-slate-950 border border-slate-800 p-6 rounded-2xl">
-        <h2 id="tv-phase-title" class="text-4xl font-black text-red-500 uppercase">Sprawdzanie Haseł</h2>
-        <p id="tv-phase-desc" class="text-slate-400 mt-1">Gracze odczytują tajne słowa na swoich ekranach...</p>
+    <!-- ARENA HOSTA -->
+    <div id="tv-arena" class="hidden space-y-6 sm:space-y-8 text-center">
+      <div id="tv-phase-banner" class="bg-slate-950 border border-slate-800 p-4 sm:p-6 rounded-2xl">
+        <h2 id="tv-phase-title" class="text-2xl sm:text-4xl font-black text-red-500 uppercase">Sprawdzanie Haseł</h2>
+        <p id="tv-phase-desc" class="text-slate-400 text-xs sm:text-base mt-1">Hasła zostały wysłane na ekrany graczy...</p>
       </div>
 
-      <div id="tv-speaker-box" class="hidden bg-slate-950 p-12 rounded-3xl border-2 border-amber-500/50 speaker-active max-w-2xl mx-auto space-y-3">
-        <span class="text-sm uppercase text-amber-500 font-bold tracking-widest block">Teraz mówi:</span>
-        <div id="tv-speaker-name" class="text-6xl font-black text-amber-400">---</div>
-        <p class="text-slate-400 text-sm">Słuchajcie uważnie! Po wypowiedzi gracz przekazuje token na swoim telefonie.</p>
+      <div id="tv-speaker-box" class="hidden bg-slate-950 p-6 sm:p-12 rounded-3xl border-2 border-amber-500/50 speaker-active max-w-2xl mx-auto space-y-2 sm:space-y-3">
+        <span class="text-xs sm:text-sm uppercase text-amber-500 font-bold tracking-widest block">Teraz mówi:</span>
+        <div id="tv-speaker-name" class="text-4xl sm:text-6xl font-black text-amber-400 truncate">---</div>
       </div>
 
-      <div id="tv-round-actions" class="hidden flex justify-center gap-6">
-        <button onclick="hostStartVoting()" class="px-8 py-5 bg-red-600 font-black text-xl rounded-2xl">Przejdź do Głosowania</button>
-        <button onclick="hostNextRoundSpeech()" class="px-8 py-5 bg-slate-800 border border-slate-700 font-bold text-xl rounded-2xl">Kolejna Runda Mowy (Skip)</button>
+      <div id="tv-round-actions" class="hidden flex flex-col sm:flex-row justify-center gap-3 sm:gap-6">
+        <button onclick="hostStartVoting()" class="w-full sm:w-auto px-6 sm:px-8 py-4 bg-red-600 font-black text-base sm:text-xl rounded-2xl">Przejdź do Głosowania</button>
+        <button onclick="hostNextRoundSpeech()" class="w-full sm:w-auto px-6 sm:px-8 py-4 bg-slate-800 border border-slate-700 font-bold text-base sm:text-xl rounded-2xl">Kolejna Runda Mowy</button>
       </div>
 
-      <div id="tv-results-box" class="hidden space-y-6 max-w-3xl mx-auto">
-        <h3 class="text-2xl font-extrabold text-amber-400">Tabela Punktowa Meczowa</h3>
+      <div id="tv-results-box" class="hidden space-y-4 sm:space-y-6 max-w-3xl mx-auto">
+        <h3 class="text-xl sm:text-2xl font-extrabold text-amber-400">Tabela Punktowa</h3>
         <div id="tv-scoreboard-full" class="space-y-2"></div>
-        <button onclick="hostReturnToLobby()" class="px-8 py-4 bg-slate-800 font-bold rounded-xl border border-slate-700">Następna Runda</button>
+        <button onclick="hostReturnToLobby()" class="w-full sm:w-auto px-8 py-4 bg-slate-800 font-bold rounded-xl border border-slate-700">Następna Runda</button>
       </div>
     </div>
   </div>
 
-  <!-- ==================== EKRAN TELEFONU (KONTROLER) ==================== -->
-  <div id="phone-controller" class="hidden max-w-sm w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl text-center space-y-6">
+  <!-- ==================== EKRAN KONTROLERA (TELEFON GRACZA) ==================== -->
+  <div id="phone-controller" class="hidden max-w-sm w-full bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-2xl text-center space-y-5 sm:space-y-6">
     <div class="flex justify-between items-center border-b border-slate-800 pb-3">
       <span id="phone-nickname" class="font-bold text-slate-200">Kontroler</span>
       <span id="phone-status" class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-400">Rozłączony</span>
@@ -94,37 +110,40 @@
     <div id="phone-join-form" class="space-y-4">
       <h2 class="text-2xl font-black text-red-500">DOŁĄCZ DO GRY</h2>
       <input type="text" id="phone-input-name" placeholder="Twoje imię" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-center font-bold">
-      <input type="text" id="phone-input-pin" maxlength="4" placeholder="4-cyfrowy PIN z TV" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-center font-mono font-bold text-2xl uppercase">
-      <button onclick="connectAsPlayer()" class="w-full py-4 bg-red-600 font-bold rounded-2xl shadow-lg">Dołącz do TV</button>
+      <input type="text" id="phone-input-pin" maxlength="4" placeholder="4-cyfrowy PIN" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-center font-mono font-bold text-2xl uppercase">
+      <button onclick="connectAsPlayer()" class="w-full py-4 bg-red-600 font-bold rounded-2xl shadow-lg">Dołącz do Hosta</button>
       
-      <div class="pt-4 border-t border-slate-800">
-        <button onclick="forceHostOnPhone()" class="text-xs text-slate-500 underline">Grajcie bez TV (Ten telefon jako Host)</button>
+      <div class="pt-3 border-t border-slate-800">
+        <button onclick="forceHostOnPhone()" class="text-xs text-slate-500 underline">Stwórz Pokój (Ten telefon jako Host)</button>
       </div>
     </div>
 
     <div id="phone-view-reveal" class="hidden space-y-6">
-      <button id="btn-hold" class="w-full py-16 bg-slate-800 border-2 border-dashed border-red-500/50 rounded-2xl font-bold text-lg select-none">
-        PRZYTRZYMAJ, ABY ZOBACZYĆ
-      </button>
-      <div id="phone-word-box" class="hidden p-6 bg-slate-950 border border-slate-800 rounded-2xl">
-        <span class="text-xs text-slate-500 uppercase block">Twoje Hasło</span>
-        <span id="phone-secret-word" class="text-2xl font-black text-red-400 mt-1 block">---</span>
+      <div class="p-5 sm:p-6 bg-slate-950 border border-red-500/40 rounded-2xl shadow-inner">
+        <span class="text-xs text-slate-400 uppercase tracking-widest font-bold block mb-1">Twoje Hasło:</span>
+        <span id="phone-secret-word" class="text-2xl sm:text-3xl font-black text-red-400 mt-1 block">---</span>
       </div>
     </div>
 
-    <div id="phone-view-turn" class="hidden space-y-6">
+    <div id="phone-view-turn" class="hidden space-y-5 sm:space-y-6">
       <div id="phone-my-turn" class="hidden space-y-4">
-        <div class="p-6 bg-amber-500/10 border border-amber-500 rounded-2xl">
-          <span class="text-amber-400 font-black text-xl block">MASZ TOKEN!</span>
-          <p class="text-xs text-slate-300 mt-1">Powiedz słowo kojarzące się z hasłem i kliknij poniżej.</p>
+        <div class="p-5 bg-amber-500/10 border border-amber-500 rounded-2xl">
+          <span class="text-amber-400 font-black text-lg sm:text-xl block">MASZ TOKEN!</span>
+          <p class="text-xs text-slate-300 mt-1">Powiedz słowo kojarzące się z Twoim hasłem i kliknij poniżej.</p>
         </div>
-        <button onclick="passSpeechToken()" class="w-full py-5 bg-amber-500 text-slate-950 font-black text-lg rounded-2xl shadow-lg">
+        <button onclick="passSpeechToken()" class="w-full py-4 sm:py-5 bg-amber-500 text-slate-950 font-black text-base sm:text-lg rounded-2xl shadow-lg">
           PRZEKAŻ TOKEN DALEJ
         </button>
       </div>
-      <div id="phone-wait-turn" class="p-8 bg-slate-950 rounded-2xl border border-slate-800">
+
+      <div id="phone-wait-turn" class="p-6 bg-slate-950 rounded-2xl border border-slate-800">
         <span class="text-xs text-slate-500 uppercase font-bold block">Teraz mówi:</span>
-        <span id="phone-speaker-name" class="text-2xl font-bold text-slate-200 mt-1 block">...</span>
+        <span id="phone-speaker-name" class="text-xl sm:text-2xl font-bold text-slate-200 mt-1 block">...</span>
+      </div>
+
+      <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-xl text-left flex justify-between items-center">
+        <span class="text-xs text-slate-500">Twoje słowo:</span>
+        <span id="phone-secret-word-small" class="font-bold text-red-400 text-sm">---</span>
       </div>
     </div>
 
@@ -135,7 +154,6 @@
   </div>
 
   <script>
-    // Podkręcona, mocniejsza baza haseł imprezowych
     const wordPairs = [
       ["Kac", "Zawał serca"],
       ["Piwko po robocie", "Rozwód"],
@@ -148,11 +166,15 @@
       ["Kot", "Mały dyktator"],
       ["Energetyk", "Legalna amfetamina"],
       ["Poniedziałek", "Dzień sądu ostatecznego"],
-      ["Inst histórias na Insta", "Ekshibicjonizm"],
-      ["Darmowe jedzenie", "Walka o przetrwanie"],
+      ["Insta stories", "Ekshibicjonizm"],
       ["Kawa", "Kokaina"],
-      ["Smartfon", "Smycz na całe życie"],
-      ["Zakupy w Biedronce", "Wyprawa w nieznane"]
+      ["Smartfon", "Smycz na całe życie"]
+    ];
+
+    const chaosClusters = [
+      { category: "Owoce", words: ["Jabłko", "Banan", "Pomarańcza", "Truskawka", "Malina", "Cytryna"], impostor: "Śrubokręt" },
+      { category: "Samochody", words: ["BMW", "Audi", "Mercedes", "Volkswagen", "Toyota", "Volvo"], impostor: "Pralka" },
+      { category: "Jedzenie", words: ["Pizza", "Burger", "Kebab", "Zapiekanka", "Hot-Dog", "Frytki"], impostor: "Młotek" }
     ];
 
     let peer = null;
@@ -168,9 +190,7 @@
       const ua = navigator.userAgent.toLowerCase();
       const isSmartTV = ua.includes("smart-tv") || ua.includes("tizen") || ua.includes("webos") || ua.includes("appletv") || ua.includes("googletv");
       const isLargeScreen = window.innerWidth >= 1024;
-
-      const urlParams = new URLSearchParams(window.location.search);
-      const pinParam = urlParams.get('pin');
+      const pinParam = new URLSearchParams(window.location.search).get('pin');
 
       if ((isSmartTV || isLargeScreen) && !pinParam) {
         isTV = true;
@@ -191,7 +211,7 @@
         document.getElementById('tv-pin-display').innerText = pin;
         document.getElementById('tv-qrcode').innerHTML = "";
         const url = window.location.href.split('?')[0] + '?pin=' + pin;
-        new QRCode(document.getElementById('tv-qrcode'), { text: url, width: 100, height: 100 });
+        new QRCode(document.getElementById('tv-qrcode'), { text: url, width: 90, height: 90 });
       });
 
       peer.on('connection', (conn) => {
@@ -220,9 +240,9 @@
     function renderTVPlayers() {
       const grid = document.getElementById('tv-players-grid');
       grid.innerHTML = players.map(p => `
-        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl font-bold text-center">
+        <div class="bg-slate-900 border border-slate-800 p-2.5 sm:p-3 rounded-xl font-bold text-center text-xs sm:text-sm truncate">
           ${p.name}
-          <div class="text-xs text-amber-400 mt-1">${p.score} pkt</div>
+          <div class="text-[10px] sm:text-xs text-amber-400 mt-0.5">${p.score} pkt</div>
         </div>
       `).join('');
       document.getElementById('tv-player-count').innerText = players.length;
@@ -230,20 +250,46 @@
     }
 
     function hostStartGame() {
-      const pair = wordPairs[Math.floor(Math.random() * wordPairs.length)];
-      const impostorIdx = Math.floor(Math.random() * players.length);
+      const settingVal = document.getElementById('setting-impostors').value;
+      const mode = document.getElementById('setting-word-mode').value;
 
-      players.forEach((p, idx) => {
-        p.isImpostor = (idx === impostorIdx);
-        p.word = p.isImpostor ? pair[1] : pair[0];
-        p.votedFor = null;
-        p.conn.send({ type: 'GAME_START', word: p.word });
-      });
+      let numImpostors = 1;
+      const maxPossible = Math.max(1, players.length - 2);
+
+      if (settingVal === 'random') {
+        numImpostors = Math.floor(Math.random() * maxPossible) + 1;
+      } else {
+        numImpostors = parseInt(settingVal);
+        if (numImpostors > maxPossible) numImpostors = maxPossible;
+      }
+
+      const indices = Array.from(Array(players.length).keys()).sort(() => Math.random() - 0.5);
+      const impostorIndices = indices.slice(0, numImpostors);
+
+      if (mode === 'classic') {
+        const pair = wordPairs[Math.floor(Math.random() * wordPairs.length)];
+        players.forEach((p, idx) => {
+          p.isImpostor = impostorIndices.includes(idx);
+          p.word = p.isImpostor ? pair[1] : pair[0];
+          p.votedFor = null;
+          p.conn.send({ type: 'GAME_START', word: p.word });
+        });
+      } else {
+        const cluster = chaosClusters[Math.floor(Math.random() * chaosClusters.length)];
+        let wordPool = [...cluster.words].sort(() => Math.random() - 0.5);
+
+        players.forEach((p, idx) => {
+          p.isImpostor = impostorIndices.includes(idx);
+          p.word = p.isImpostor ? cluster.impostor : (wordPool[idx % wordPool.length]);
+          p.votedFor = null;
+          p.conn.send({ type: 'GAME_START', word: p.word });
+        });
+      }
 
       document.getElementById('tv-lobby').classList.add('hidden');
       document.getElementById('tv-arena').classList.remove('hidden');
 
-      setTimeout(() => startSpeechPhase(), 5000);
+      setTimeout(() => startSpeechPhase(), 4000);
     }
 
     function startSpeechPhase() {
@@ -251,7 +297,7 @@
       currentTurnIdx = 0;
 
       document.getElementById('tv-phase-title').innerText = "Runda Mowy";
-      document.getElementById('tv-phase-desc').innerText = "Obecny gracz podaje jedno skojarzenie do swojego słowa.";
+      document.getElementById('tv-phase-desc').innerText = "Gracze podają swoje skojarzenia na głos!";
       document.getElementById('tv-speaker-box').classList.remove('hidden');
 
       updateSpeakerUI();
@@ -292,13 +338,14 @@
     }
 
     function processVoteResults() {
-      const impostor = players.find(p => p.isImpostor);
+      const impostors = players.filter(p => p.isImpostor);
+      const impostorIds = impostors.map(i => i.id);
       
       players.forEach(p => {
-        if (!p.isImpostor && p.votedFor === impostor.id) p.score += 10;
+        if (!p.isImpostor && impostorIds.includes(p.votedFor)) p.score += 10;
         if (p.isImpostor) {
-          const votesAgainstImpostor = players.filter(x => x.votedFor === impostor.id).length;
-          if (votesAgainstImpostor < (players.length / 2)) p.score += 25;
+          const votesAgainstMe = players.filter(x => x.votedFor === p.id).length;
+          if (votesAgainstMe < (players.length / 2)) p.score += 25;
         }
       });
 
@@ -309,13 +356,13 @@
 
       const fullScoreboard = document.getElementById('tv-scoreboard-full');
       fullScoreboard.innerHTML = players.map((p, idx) => `
-        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex justify-between items-center">
+        <div class="bg-slate-950 p-3 sm:p-4 rounded-xl border border-slate-800 flex justify-between items-center text-xs sm:text-base">
           <div>
             <span class="font-bold text-amber-400">#${idx + 1}</span>
             <span class="font-bold text-slate-200 ml-2">${p.name}</span>
-            <span class="text-xs text-red-400 ml-2">(${p.isImpostor ? 'Impostor' : 'Cywil'}: ${p.word})</span>
+            <span class="text-[10px] sm:text-xs text-red-400 ml-1 sm:ml-2 block sm:inline">(${p.isImpostor ? 'Impostor' : 'Cywil'}: ${p.word})</span>
           </div>
-          <span class="font-black text-xl text-amber-400">${p.score} pkt</span>
+          <span class="font-black text-base sm:text-xl text-amber-400">${p.score} pkt</span>
         </div>
       `).join('');
 
@@ -352,8 +399,9 @@
         document.getElementById('phone-view-reveal').classList.remove('hidden');
         document.getElementById('phone-view-turn').classList.add('hidden');
         document.getElementById('phone-view-voting').classList.add('hidden');
+        
         document.getElementById('phone-secret-word').innerText = data.word;
-        setupHoldBtn();
+        document.getElementById('phone-secret-word-small').innerText = data.word;
       } else if (data.type === 'TURN_UPDATE') {
         document.getElementById('phone-view-reveal').classList.add('hidden');
         document.getElementById('phone-view-turn').classList.remove('hidden');
@@ -375,7 +423,7 @@
         data.targets.forEach(t => {
           if (t.id === myId) return;
           const btn = document.createElement('button');
-          btn.className = "w-full py-4 bg-slate-800 font-bold rounded-xl border border-slate-700";
+          btn.className = "w-full py-4 bg-slate-800 font-bold rounded-xl border border-slate-700 active:bg-red-950";
           btn.innerText = t.name;
           btn.onclick = () => {
             hostConn.send({ type: 'VOTE', targetId: t.id });
@@ -387,15 +435,6 @@
     }
 
     function passSpeechToken() { hostConn.send({ type: 'TOKEN_PASS' }); }
-
-    function setupHoldBtn() {
-      const btn = document.getElementById('btn-hold');
-      const box = document.getElementById('phone-word-box');
-      btn.onmousedown = () => box.classList.remove('hidden');
-      btn.onmouseup = () => box.classList.add('hidden');
-      btn.ontouchstart = (e) => { e.preventDefault(); box.classList.remove('hidden'); };
-      btn.ontouchend = (e) => { e.preventDefault(); box.classList.add('hidden'); };
-    }
 
     function forceHostOnPhone() {
       document.getElementById('phone-controller').classList.add('hidden');

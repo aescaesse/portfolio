@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Impostor Party - Fully Responsive</title>
+  <title>Impostor Party - Interactive Controllers</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -18,7 +18,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center p-3 sm:p-6 select-none font-sans overflow-x-hidden">
 
-  <!-- ==================== EKRAN HOSTA (TV / DASHBOARD HOSTA ON PHONE) ==================== -->
+  <!-- ==================== EKRAN HOSTA (TV / TABLICA) ==================== -->
   <div id="tv-dashboard" class="hidden w-full max-w-5xl bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-2xl space-y-6 sm:space-y-8">
     
     <!-- LOBBY HOSTA -->
@@ -87,11 +87,6 @@
         <div id="tv-speaker-name" class="text-4xl sm:text-6xl font-black text-amber-400 truncate">---</div>
       </div>
 
-      <div id="tv-round-actions" class="hidden flex flex-col sm:flex-row justify-center gap-3 sm:gap-6">
-        <button onclick="hostStartVoting()" class="w-full sm:w-auto px-6 sm:px-8 py-4 bg-red-600 font-black text-base sm:text-xl rounded-2xl">Przejdź do Głosowania</button>
-        <button onclick="hostNextRoundSpeech()" class="w-full sm:w-auto px-6 sm:px-8 py-4 bg-slate-800 border border-slate-700 font-bold text-base sm:text-xl rounded-2xl">Kolejna Runda Mowy</button>
-      </div>
-
       <div id="tv-results-box" class="hidden space-y-4 sm:space-y-6 max-w-3xl mx-auto">
         <h3 class="text-xl sm:text-2xl font-extrabold text-amber-400">Tabela Punktowa</h3>
         <div id="tv-scoreboard-full" class="space-y-2"></div>
@@ -107,6 +102,7 @@
       <span id="phone-status" class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-400">Rozłączony</span>
     </div>
 
+    <!-- FORMULARZ DOŁĄCZANIA -->
     <div id="phone-join-form" class="space-y-4">
       <h2 class="text-2xl font-black text-red-500">DOŁĄCZ DO GRY</h2>
       <input type="text" id="phone-input-name" placeholder="Twoje imię" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-center font-bold">
@@ -118,13 +114,13 @@
       </div>
     </div>
 
-    <div id="phone-view-reveal" class="hidden space-y-6">
-      <div class="p-5 sm:p-6 bg-slate-950 border border-red-500/40 rounded-2xl shadow-inner">
-        <span class="text-xs text-slate-400 uppercase tracking-widest font-bold block mb-1">Twoje Hasło:</span>
-        <span id="phone-secret-word" class="text-2xl sm:text-3xl font-black text-red-400 mt-1 block">---</span>
-      </div>
+    <!-- STAŁA SEKCJA ZE SŁOWEM GRACZA -->
+    <div id="phone-persistent-word" class="hidden p-4 bg-slate-950 border border-red-500/40 rounded-2xl shadow-inner space-y-1">
+      <span class="text-[11px] text-slate-400 uppercase tracking-widest font-bold block">Twoje Hasło</span>
+      <span id="phone-secret-word" class="text-2xl sm:text-3xl font-black text-red-400 block tracking-wide">---</span>
     </div>
 
+    <!-- FAZA: TOKEN MOWY -->
     <div id="phone-view-turn" class="hidden space-y-5 sm:space-y-6">
       <div id="phone-my-turn" class="hidden space-y-4">
         <div class="p-5 bg-amber-500/10 border border-amber-500 rounded-2xl">
@@ -140,13 +136,22 @@
         <span class="text-xs text-slate-500 uppercase font-bold block">Teraz mówi:</span>
         <span id="phone-speaker-name" class="text-xl sm:text-2xl font-bold text-slate-200 mt-1 block">...</span>
       </div>
+    </div>
 
-      <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-xl text-left flex justify-between items-center">
-        <span class="text-xs text-slate-500">Twoje słowo:</span>
-        <span id="phone-secret-word-small" class="font-bold text-red-400 text-sm">---</span>
+    <!-- FAZA: DECYZJA PO RUNDZIE MOWY (GŁOSOWANIE VS KOLEJNA RUNDA) -->
+    <div id="phone-view-decision" class="hidden space-y-4">
+      <h3 class="text-base font-bold text-slate-200">Koniec wypowiedzi! Co robimy?</h3>
+      <div id="decision-buttons" class="space-y-3">
+        <button onclick="sendDecision('VOTE')" class="w-full py-4 bg-red-600 hover:bg-red-500 font-black rounded-2xl text-base shadow-lg transition">
+          Głosujemy! 🗳️
+        </button>
+        <button onclick="sendDecision('SKIP')" class="w-full py-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold rounded-2xl text-sm text-slate-200 transition">
+          Jeszcze jedna runda mowy 🗣️
+        </button>
       </div>
     </div>
 
+    <!-- FAZA: GŁOSOWANIE NA IMPOSTORA -->
     <div id="phone-view-voting" class="hidden space-y-4">
       <h3 class="text-lg font-bold text-slate-200">Głosuj na Impostora</h3>
       <div id="phone-vote-btns" class="space-y-2"></div>
@@ -225,11 +230,26 @@
 
     function handleHostData(conn, data) {
       if (data.type === 'JOIN') {
-        players.push({ id: conn.peer, conn: conn, name: data.name, word: '', isImpostor: false, score: 0, votedFor: null });
+        players.push({ id: conn.peer, conn: conn, name: data.name, word: '', isImpostor: false, score: 0, votedFor: null, decision: null });
         renderTVPlayers();
         conn.send({ type: 'JOIN_OK', name: data.name });
       } else if (data.type === 'TOKEN_PASS') {
         advanceTurn();
+      } else if (data.type === 'DECISION') {
+        const p = players.find(x => x.id === conn.peer);
+        if (p) p.decision = data.choice;
+
+        // Jeśli wszyscy podjęli decyzję -> podlicz większość
+        if (players.every(x => x.decision !== null)) {
+          const voteCount = players.filter(x => x.decision === 'VOTE').length;
+          const skipCount = players.filter(x => x.decision === 'SKIP').length;
+
+          if (voteCount >= skipCount) {
+            hostStartVoting();
+          } else {
+            startSpeechPhase();
+          }
+        }
       } else if (data.type === 'VOTE') {
         const p = players.find(x => x.id === conn.peer);
         if (p) p.votedFor = data.targetId;
@@ -272,6 +292,7 @@
           p.isImpostor = impostorIndices.includes(idx);
           p.word = p.isImpostor ? pair[1] : pair[0];
           p.votedFor = null;
+          p.decision = null;
           p.conn.send({ type: 'GAME_START', word: p.word });
         });
       } else {
@@ -282,6 +303,7 @@
           p.isImpostor = impostorIndices.includes(idx);
           p.word = p.isImpostor ? cluster.impostor : (wordPool[idx % wordPool.length]);
           p.votedFor = null;
+          p.decision = null;
           p.conn.send({ type: 'GAME_START', word: p.word });
         });
       }
@@ -317,19 +339,19 @@
       if (currentTurnIdx < turnOrder.length) {
         updateSpeakerUI();
       } else {
+        // Koniec wypowiedzi -> wysyłamy interaktywny wybór na telefony
         document.getElementById('tv-speaker-box').classList.add('hidden');
-        document.getElementById('tv-round-actions').classList.remove('hidden');
-        document.getElementById('tv-phase-title').innerText = "Koniec Wypowiedzi";
+        document.getElementById('tv-phase-title').innerText = "Wybór Graczy";
+        document.getElementById('tv-phase-desc').innerText = "Gracze decydują na telefonach: Głosowanie czy Kolejna Runda?";
+
+        players.forEach(p => {
+          p.decision = null;
+          p.conn.send({ type: 'PHASE_DECISION' });
+        });
       }
     }
 
-    function hostNextRoundSpeech() {
-      document.getElementById('tv-round-actions').classList.add('hidden');
-      startSpeechPhase();
-    }
-
     function hostStartVoting() {
-      document.getElementById('tv-round-actions').classList.add('hidden');
       document.getElementById('tv-phase-title').innerText = "Głosowanie";
       document.getElementById('tv-phase-desc').innerText = "Wskażcie Impostora na ekranach telefonów!";
 
@@ -376,6 +398,7 @@
       renderTVPlayers();
     }
 
+    // LOGIKA KONTROLERA (TELEFON)
     function connectAsPlayer() {
       const pin = document.getElementById('phone-input-pin').value.trim();
       const name = document.getElementById('phone-input-name').value.trim() || 'Gracz';
@@ -396,14 +419,14 @@
         document.getElementById('phone-status').innerText = "Połączono";
         document.getElementById('phone-status').className = "text-xs bg-emerald-950 text-emerald-400 px-2 py-1 rounded font-bold";
       } else if (data.type === 'GAME_START') {
-        document.getElementById('phone-view-reveal').classList.remove('hidden');
+        document.getElementById('phone-persistent-word').classList.remove('hidden');
         document.getElementById('phone-view-turn').classList.add('hidden');
+        document.getElementById('phone-view-decision').classList.add('hidden');
         document.getElementById('phone-view-voting').classList.add('hidden');
         
         document.getElementById('phone-secret-word').innerText = data.word;
-        document.getElementById('phone-secret-word-small').innerText = data.word;
       } else if (data.type === 'TURN_UPDATE') {
-        document.getElementById('phone-view-reveal').classList.add('hidden');
+        document.getElementById('phone-view-decision').classList.add('hidden');
         document.getElementById('phone-view-turn').classList.remove('hidden');
 
         if (data.isMe) {
@@ -414,8 +437,19 @@
           document.getElementById('phone-wait-turn').classList.remove('hidden');
           document.getElementById('phone-speaker-name').innerText = data.speaker;
         }
-      } else if (data.type === 'PHASE_VOTING') {
+      } else if (data.type === 'PHASE_DECISION') {
         document.getElementById('phone-view-turn').classList.add('hidden');
+        document.getElementById('phone-view-decision').classList.remove('hidden');
+        document.getElementById('decision-buttons').innerHTML = `
+          <button onclick="sendDecision('VOTE')" class="w-full py-4 bg-red-600 hover:bg-red-500 font-black rounded-2xl text-base shadow-lg transition">
+            Głosujemy! 🗳️
+          </button>
+          <button onclick="sendDecision('SKIP')" class="w-full py-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold rounded-2xl text-sm text-slate-200 transition">
+            Jeszcze jedna runda mowy 🗣️
+          </button>
+        `;
+      } else if (data.type === 'PHASE_VOTING') {
+        document.getElementById('phone-view-decision').classList.add('hidden');
         document.getElementById('phone-view-voting').classList.remove('hidden');
 
         const container = document.getElementById('phone-vote-btns');
@@ -435,6 +469,15 @@
     }
 
     function passSpeechToken() { hostConn.send({ type: 'TOKEN_PASS' }); }
+
+    function sendDecision(choice) {
+      hostConn.send({ type: 'DECISION', choice: choice });
+      document.getElementById('decision-buttons').innerHTML = `
+        <div class="p-4 bg-slate-950 border border-slate-800 font-bold text-slate-400 rounded-xl">
+          Wybór przesłany! Oczekiwanie na resztę graczy...
+        </div>
+      `;
+    }
 
     function forceHostOnPhone() {
       document.getElementById('phone-controller').classList.add('hidden');

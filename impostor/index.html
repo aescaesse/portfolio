@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Impostor Party - Dashboard TV & Live Status</title>
+  <title>Impostor Party - Full Multi-Screen Game</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -18,7 +18,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center p-3 sm:p-6 select-none font-sans overflow-x-hidden">
 
-  <!-- ==================== EKRAN HOSTA (TV / GRAFICZNY DASHBOARD) ==================== -->
+  <!-- ==================== EKRAN HOSTA (TV / TABLICA) ==================== -->
   <div id="tv-dashboard" class="hidden w-full max-w-5xl bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-2xl space-y-6 sm:space-y-8">
     
     <!-- LOBBY HOSTA -->
@@ -161,6 +161,17 @@
   </div>
 
   <script>
+    // Konfiguracja STUN serwerów Google zapobiegająca blokowaniu P2P na telefonach
+    const peerConfig = {
+      config: {
+        iceServers: [
+          { urls: 'stun:stun.l.google.com:19302' },
+          { urls: 'stun:stun1.l.google.com:19302' },
+          { urls: 'stun:stun2.l.google.com:19302' }
+        ]
+      }
+    };
+
     const wordPairs = [
       ["Kac", "Zawał serca"],
       ["Piwko po robocie", "Rozwód"],
@@ -192,7 +203,7 @@
     let players = []; 
     let turnOrder = [];
     let currentTurnIdx = 0;
-    let currentPhase = ""; // "SPEECH", "DECISION", "VOTING"
+    let currentPhase = "";
 
     window.onload = () => {
       const ua = navigator.userAgent.toLowerCase();
@@ -213,7 +224,7 @@
 
     function initTVHost(customPin = null) {
       const pin = customPin || Math.floor(1000 + Math.random() * 9000).toString();
-      peer = new Peer('imp-room-' + pin);
+      peer = new Peer('imp-room-' + pin, peerConfig);
 
       peer.on('open', () => {
         document.getElementById('tv-pin-display').innerText = pin;
@@ -229,6 +240,10 @@
           renderTVPlayers();
         });
       });
+
+      peer.on('error', (err) => {
+        console.error("Błąd Hosta PeerJS:", err);
+      });
     }
 
     function handleHostData(conn, data) {
@@ -241,7 +256,7 @@
       } else if (data.type === 'DECISION') {
         const p = players.find(x => x.id === conn.peer);
         if (p) p.decision = data.choice;
-        renderTVLiveTracker(); // Aktualizacja widoku decyzji na TV
+        renderTVLiveTracker();
 
         if (players.every(x => x.decision !== null)) {
           const voteCount = players.filter(x => x.decision === 'VOTE').length;
@@ -256,7 +271,7 @@
       } else if (data.type === 'VOTE') {
         const p = players.find(x => x.id === conn.peer);
         if (p) p.votedFor = data.targetId;
-        renderTVLiveTracker(); // Aktualizacja widoku głosów na TV
+        renderTVLiveTracker();
 
         if (players.every(x => x.votedFor !== null)) processVoteResults();
       }
@@ -346,7 +361,6 @@
       if (currentTurnIdx < turnOrder.length) {
         updateSpeakerUI();
       } else {
-        // Faza Decyzji
         currentPhase = "DECISION";
         document.getElementById('tv-phase-title').innerText = "Decyzja Graczy";
         document.getElementById('tv-phase-desc').innerText = "Gracze decydują na telefonach: Głosowanie czy Kolejna Runda?";
@@ -373,7 +387,6 @@
       renderTVLiveTracker();
     }
 
-    // GENERATOR DYNAMICZNEJ SIATKI STATUSÓW DLA TV
     function renderTVLiveTracker() {
       const grid = document.getElementById('tv-live-grid');
       grid.innerHTML = '';
@@ -480,12 +493,35 @@
       const pin = document.getElementById('phone-input-pin').value.trim();
       const name = document.getElementById('phone-input-name').value.trim() || 'Gracz';
 
-      peer = new Peer();
+      if (!pin || pin.length !== 4) {
+        alert('Wpisz poprawny 4-cyfrowy PIN!');
+        return;
+      }
+
+      peer = new Peer(peerConfig);
+
       peer.on('open', (id) => {
         myId = id;
-        hostConn = peer.connect('imp-room-' + pin);
-        hostConn.on('open', () => hostConn.send({ type: 'JOIN', name: name }));
+        const hostPeerId = 'imp-room-' + pin;
+        hostConn = peer.connect(hostPeerId, { reliable: true });
+
+        hostConn.on('open', () => {
+          hostConn.send({ type: 'JOIN', name: name });
+        });
+
         hostConn.on('data', handlePlayerData);
+
+        hostConn.on('error', (err) => {
+          alert('Błąd połączenia z pokoju: ' + err);
+        });
+      });
+
+      peer.on('error', (err) => {
+        if (err.type === 'peer-unavailable') {
+          alert('Nie znaleziono pokoju o podanym PIN-ie! Upewnij się, że Host jest otwarty.');
+        } else {
+          alert('Błąd połączenia na telefonie: ' + err.type);
+        }
       });
     }
 

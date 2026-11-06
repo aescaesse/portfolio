@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Impostor Party - Full Multi-Screen Game</title>
+  <title>Impostor Party - High Stability PeerJS</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -32,7 +32,7 @@
           <div id="tv-qrcode" class="w-20 h-20 sm:w-24 sm:h-24"></div>
           <div class="text-slate-900 text-left hidden sm:block">
             <p class="font-extrabold text-sm sm:text-lg">Dołącz do gry!</p>
-            <p class="text-xs text-slate-600">Skanuj aparatów</p>
+            <p class="text-xs text-slate-600">Aparat -> Skanuj QR</p>
           </div>
         </div>
       </div>
@@ -161,13 +161,18 @@
   </div>
 
   <script>
-    // Konfiguracja STUN serwerów Google zapobiegająca blokowaniu P2P na telefonach
+    // Dedykowany, stabilny serwer sygnałowy na porcie 443 (HTTPS) z zapasowym STUN
     const peerConfig = {
+      host: '0.peerjs.com',
+      port: 443,
+      path: '/',
+      secure: true,
       config: {
         iceServers: [
           { urls: 'stun:stun.l.google.com:19302' },
           { urls: 'stun:stun1.l.google.com:19302' },
-          { urls: 'stun:stun2.l.google.com:19302' }
+          { urls: 'stun:stun2.l.google.com:19302' },
+          { urls: 'stun:stun3.l.google.com:19302' }
         ]
       }
     };
@@ -518,9 +523,9 @@
 
       peer.on('error', (err) => {
         if (err.type === 'peer-unavailable') {
-          alert('Nie znaleziono pokoju o podanym PIN-ie! Upewnij się, że Host jest otwarty.');
+          alert('Nie znaleziono pokoju o podanym PIN-ie! Upewnij się, że Pokój jest otwarty.');
         } else {
-          alert('Błąd połączenia na telefonie: ' + err.type);
+          alert('Błąd połączenia: ' + err.type);
         }
       });
     }

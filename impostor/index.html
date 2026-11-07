@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Impostor Party - Ultimate Edition</title>
+  <title>Impostor Party - Live V部に Tracker</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -23,7 +23,7 @@
 </head>
 <body class="bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col items-center justify-center p-3 sm:p-6 select-none font-sans transition-colors duration-300">
 
-  <!-- PRZYCISK MOTYWU DZIEŃ / NOC (GLOBALNY) -->
+  <!-- PRZYCISK MOTYWU DZIEŃ / NOC -->
   <button onclick="toggleTheme()" class="absolute top-4 right-4 z-50 p-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-2xl shadow-lg font-bold text-xs flex items-center gap-2 active:scale-95 transition">
     <span id="theme-icon">☀️</span> <span id="theme-text" class="hidden sm:inline">Tryb Jasny</span>
   </button>
@@ -42,7 +42,7 @@
           <div id="tv-qrcode" class="w-20 h-20 sm:w-24 sm:h-24"></div>
           <div class="text-slate-900 text-left hidden sm:block">
             <p class="font-extrabold text-sm">Dołącz do gry!</p>
-            <p class="text-xs text-slate-500">Skanuj aparatów</p>
+            <p class="text-xs text-slate-500">Skanuj aparatem</p>
           </div>
         </div>
       </div>
@@ -71,7 +71,7 @@
           <div>
             <label class="text-xs text-slate-500 dark:text-slate-400 font-bold block mb-1">Tryb Słów:</label>
             <select id="setting-word-mode" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 font-bold text-xs">
-              <option value="classic">Standardowy (Imprezowe / Spicy)</option>
+              <option value="classic">Standardowy (200+ par haseł)</option>
               <option value="chaos">Chaos (Różne podobne słowa)</option>
             </select>
           </div>
@@ -97,14 +97,22 @@
 
     <!-- ARENA HOSTA NA ŻYWO -->
     <div id="tv-arena" class="hidden space-y-6 text-center">
-      <div class="flex justify-between items-center bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-4 rounded-2xl">
-        <div>
-          <h2 id="tv-phase-title" class="text-xl sm:text-3xl font-black text-red-600 dark:text-red-500 uppercase text-left">Faza Gry</h2>
-          <p id="tv-phase-desc" class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mt-0.5 text-left">Trwa rozgrywka...</p>
+      <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-4 rounded-2xl gap-3">
+        <div class="text-left">
+          <h2 id="tv-phase-title" class="text-xl sm:text-3xl font-black text-red-600 dark:text-red-500 uppercase">Faza Gry</h2>
+          <p id="tv-phase-desc" class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mt-0.5">Trwa rozgrywka...</p>
         </div>
-        <div id="tv-timer-container" class="hidden text-right font-mono bg-red-500/10 border border-red-500/30 px-4 py-2 rounded-xl">
-          <span class="text-[10px] text-red-500 uppercase font-bold block">Pozostały czas</span>
-          <span id="tv-timer-display" class="text-2xl font-black text-red-500">10s</span>
+        <div class="flex items-center gap-3">
+          <!-- Licznik oddanych głosów na TV -->
+          <div id="tv-votes-counter-box" class="hidden text-center bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 px-4 py-2 rounded-xl">
+            <span class="text-[10px] text-slate-500 uppercase font-bold block">Status głosów</span>
+            <span id="tv-votes-progress" class="text-xl font-black text-amber-500">0 / 0</span>
+          </div>
+          <!-- Timer -->
+          <div id="tv-timer-container" class="hidden text-right font-mono bg-red-500/10 border border-red-500/30 px-4 py-2 rounded-xl">
+            <span class="text-[10px] text-red-500 uppercase font-bold block">Czas</span>
+            <span id="tv-timer-display" class="text-xl font-black text-red-500">10s</span>
+          </div>
         </div>
       </div>
 
@@ -169,7 +177,10 @@
 
     <!-- FAZA: DECYZJA PO RUNDZIE MOWY -->
     <div id="phone-view-decision" class="hidden space-y-4">
-      <div class="flex justify-between items-center"><h3 class="text-sm font-bold text-slate-700 dark:text-slate-200">Koniec wypowiedzi! Co robimy?</h3><span id="phone-timer-decision" class="font-mono text-red-500 font-bold text-xs"></span></div>
+      <div class="flex justify-between items-center text-xs">
+        <span class="font-bold text-slate-700 dark:text-slate-200">Decyzja (<span id="phone-decision-counter">0 / 0</span>)</span>
+        <span id="phone-timer-decision" class="font-mono text-red-500 font-bold"></span>
+      </div>
       <div id="decision-buttons" class="space-y-3">
         <button onclick="sendDecision('VOTE')" class="w-full py-4 bg-red-600 hover:bg-red-500 text-white font-black rounded-2xl text-base shadow-lg transition">
           Głosujemy! 🗳️
@@ -182,7 +193,10 @@
 
     <!-- FAZA: GŁOSOWANIE NA IMPOSTORA -->
     <div id="phone-view-voting" class="hidden space-y-4">
-      <div class="flex justify-between items-center"><h3 class="text-base font-bold text-slate-800 dark:text-slate-200">Głosuj na Impostora</h3><span id="phone-timer-voting" class="font-mono text-red-500 font-bold text-xs"></span></div>
+      <div class="flex justify-between items-center text-xs">
+        <span class="font-bold text-slate-800 dark:text-slate-200">Głosy (<span id="phone-voting-counter">0 / 0</span>)</span>
+        <span id="phone-timer-voting" class="font-mono text-red-500 font-bold"></span>
+      </div>
       <div id="phone-vote-btns" class="space-y-2"></div>
     </div>
 
@@ -225,44 +239,101 @@
       }
     };
 
-    // ROZBUDOWANA BAZA HASEŁ (IMPREZOWE I SPICY)
     const wordPairs = [
-      ["Kac", "Zawał serca"],
-      ["Piwko po robocie", "Rozwód"],
-      ["Teściowa", "Więzienie o zaostrzonym rygorze"],
-      ["Kredyt hipoteczny", "Dożywocie"],
-      ["Ex (Była/Były)", "Katastrofa budowlana"],
-      ["Szef w poniedziałek rano", "Seryjny morderca"],
-      ["Wizyta u dentysty", "Tortury średniowieczne"],
-      ["Klocek Lego", "Mina przeciwpiechotna"],
-      ["Kot", "Mały dyktator"],
-      ["Energetyk", "Legalna amfetamina"],
-      ["Poniedziałek", "Dzień sądu ostatecznego"],
-      ["Insta stories", "Ekshibicjonizm"],
-      ["Kawa", "Kokaina"],
-      ["Smartfon", "Smycz na całe życie"],
-      // Nowe imprezowe i spicy
-      ["Kac moralny", "Depresja kliniczna"],
-      ["Impreza do rana", "Egzorcyzmy"],
-      ["Test ciążowy", "Wyrok śmierci"],
-      ["Były w łóżku", "Tragedia grecka"],
-      ["Kłótnia o pilota", "III Wojna Światowa"],
-      ["Randka w ciemno", "Przesłuchanie przez UB"],
-      ["Jednonocna przygoda", "Wypadek przy pracy"],
-      ["Grupa na WhatsAppie", "Siedlisko wirusów"],
-      ["Tinder", "Katalog złudzeń"],
-      ["Zdrada", "Ostateczna kasacja"],
-      ["Wesele u rodziny", "Festiwal obłudy"],
-      ["Striptease", "Zawał dziadka"],
-      ["Fotka w lustrze", "Narcystyczny amok"],
-      ["Szybki numerek", "Awaria systemu"]
+      ["Kac", "Zawał serca"], ["Piwko po robocie", "Rozwód"], ["Teściowa", "Więzienie o zaostrzonym rygorze"],
+      ["Kredyt hipoteczny", "Dożywocie"], ["Ex (Była/Były)", "Katastrofa budowlana"], ["Szef w poniedziałek rano", "Seryjny morderca"],
+      ["Wizyta u dentysty", "Tortury średniowieczne"], ["Klocek Lego", "Mina przeciwpiechotna"], ["Kot", "Mały dyktator"],
+      ["Energetyk", "Legalna amfetamina"], ["Poniedziałek", "Dzień sądu ostatecznego"], ["Insta stories", "Ekshibicjonizm"],
+      ["Kawa", "Kokaina"], ["Smartfon", "Smycz na całe życie"], ["Kac moralny", "Depresja kliniczna"],
+      ["Impreza do rana", "Egzorcyzmy"], ["Test ciążowy", "Wyrok śmierci"], ["Były w łóżku", "Tragedia grecka"],
+      ["Kłótnia o pilota", "III Wojna Światowa"], ["Randka w ciemno", "Przesłuchanie przez UB"], ["Jednonocna przygoda", "Wypadek przy pracy"],
+      ["Grupa na WhatsAppie", "Siedlisko wirusów"], ["Tinder", "Katalog złudzeń"], ["Zdrada", "Ostateczna kasacja"],
+      ["Wesele u rodziny", "Festiwal obłudy"], ["Striptease", "Zawał dziadka"], ["Fotka w lustrze", "Narcystyczny amok"],
+      ["Szybki numerek", "Awaria systemu"], ["Impreza firmowa", "Pole minowe"], ["Wolny weekend", "Mylne złudzenie"],
+      ["Winda po kebabi", "Komora gazowa"], ["Dzieci znajomych", "Małe demony"], ["Dieta od poniedziałku", "Mitologiczny stwór"],
+      ["Skarpetki w sandałach", "Zbrodnia przeciw ludzkości"], ["Biedronka w sobotę", "Strefa wojny"], ["Zakupy z żoną", "Maraton przetrwania"],
+      ["Obiecywanie poprawy", "Polityczna kiełbasa"], ["Kolejka do ZUS-u", "Czyściec"], ["Mandat z fotoradaru", "Legalny podatek od złości"],
+      ["Parking równoległy", "Egzamin z płaczu"], ["Stażysta w IT", "Saper-samouczek"], ["Kolega z biurka", "Wrzód na tyłku"],
+      ["Klimatyzacja w biurku", "Zapalenie płuc"], ["Zupa zuo", "Toksyczny odpad"], ["Wspólne mieszkanie", "Test bojowy"],
+      ["Pierwszy buziak", "Potknięcie języka"], ["Zazdrość", "Zielony potwór"], ["Sekrety z przeszłości", "Bomba z opóźnionym zapłonem"],
+      ["Impreza zapoznawcza", "Sztuczne uśmiechy"], ["Kłótnia o zmywarko", "Bitwa pod Grunwaldem"], ["Wizyta hydraulika", "Dramat w 3 aktach"],
+      ["Nowy samochód", "Druga hipoteka"], ["Gliceryna w vape", "Chmura dymu"], ["Zimne piwo", "Boski nektar"],
+      ["Poprawiny", "Dzień wstydu"], ["Klin", "Powrót z tamtego świata"], ["Ból głowy", "Wymówka wszech czasów"],
+      ["Szef rano", "Wampir energetyczny"], ["Kredyt w CHF", "Finansowe sepuku"], ["Inflacja", "Cichy złodziej"],
+      ["ZUS", "Legalna mafia"], ["Sklep mięsny", "Klub weganina"], ["Siłownia 2 stycznia", "Cmentarzysko postanowień"],
+      ["Baton po 22", "Grzech główny"], ["Kiełbasa z grilla", "Polski rytuał"], ["Szybki obiad", "Zupka chińska"],
+      ["Woda gazowana", "Kolczasty płyn"], ["Stary laptop", "Grzałka do pokoju"], ["Bluetooth", "Magia bez kabli"],
+      ["Hasło do WiFi", "Najcenniejszy sekret"], ["Aktualizacja systemu", "Blokada komputera na godzinę"], ["Czarny ekran", "Zawał programisty"],
+      ["Kabel HDMI", "Zagubiona cywilizacja"], ["Pendrive włożony za 3 razem", "Cud fizyki"], ["Klawiatura mechaniczna", "Wróg śpiących domowników"],
+      ["Myszka bez baterii", "Koniec pracy"], ["Kot na klawiaturze", "Cenzor treści"], ["Pies sąsiada", "Budzik o 6 rano"],
+      ["Papuga", "Skrzydlaty konfident"], ["Chomik", "Mistrz ucieczek"], ["Wąż w terrarium", "Sznurówka z zębami"],
+      ["Pająk w pokoju", "Właściciel mieszkania"], ["Komar w nocy", "Terrorysta akustyczny"], ["Mucha na szybie", "Filozof"],
+      ["Ślimak", "Posiadacz domu"], ["Żaba", "Książę w przebraniu"], ["Bocian", "Kłamca z telewizji"],
+      ["Gołąb", "Skrzydlaty szczur"], ["Wróbel", "Złodziej okruchów"], ["Kura", "Dinozaur domowy"],
+      ["Krowa", "Fabrika mleka"], ["Świnia", "Ekspert od błota"], ["Koń", "Wielki pies"],
+      ["Ośle", "Uparty uparciuch"], ["Baran", "Baranek"], ["Wilk", "Pies w wersji hard"],
+      ["Niedźwiedź", "Śpioch w lesie"], ["Lis", "Rudy cwaniak"], ["Dzik", "Taran leśny"],
+      ["Sarna", "Bambi na drodze"], ["Jeż", "Kłująca szczotka"], ["Kret", "Saper ziemny"],
+      ["Wiewiórka", "Magazynier orzechów"], ["Sowa", "Nocny Marek"], ["Orzeł", "Król ptaków"],
+      ["Bocian", "Kurier dzieci"], ["Zając", "Królik turbo"], ["Żubr", "Wielki włochacz"],
+      ["Szop pracz", "Mały bandzior"], ["Hiena", "Śmieszek z sawanny"], ["Lew", "Leniwy król"],
+      ["Tygrys", "Pasiasty kocur"], ["Słoń", "Trąbalski"], ["Żyrafa", "Wieżowiec z plamami"],
+      ["Zebra", "W paski"], ["Małpa", "Przodek w pracy"], ["Panda", "Miś leniwiec"],
+      ["Koala", "Śpioch na eukaliptusie"], ["Kangur", "Bokser z torbą"], ["Hipopotam", "Ciężarówka z błota"],
+      ["Nosorożec", "Jednorożec z czołgiem"], ["Krokodyl", "Torebka z zębami"], ["Rekin", "Torpeda oceaniczna"],
+      ["Wieloryb", "Pływająca wyspa"], ["Delfin", "Morski inteligent"], ["Ośmiornica", "Wieloręki stwór"],
+      ["Krab", "Szczypawka morska"], ["Meduza", "Galaretka z prądem"], ["Rozgwiazda", "Płaska gwiazda"],
+      ["Konik morski", "Szachowy pionek"], ["Złota rybka", "Skromne 3 życzenia"], ["Wąż morskiej", "Mit"],
+      ["Pingwin", "Frak na lodzie"], ["Foka", "Morski pączuszek"], ["Mors", "Wąsaty grubas"],
+      ["Niedźwiedź polarny", "Biały puchatek"], ["Albatros", "Lotnik oceaniczny"], ["Papuga ara", "Kolorowy krzykacz"],
+      ["Flaming", "Różowy stojak"], ["Pawi ogon", "Pokazówka"], ["Dzięcioł", "Lekarz drzew"],
+      ["Kukuryku", "Budzik wiejski"], ["Indyk", "Głuptas z koralami"], ["Gęś", "Agresywny biały ptak"],
+      ["Kaczka", "Kwaka"], ["Łabędź", "Dostojny dziób"], ["Bocian", "Długonogi lotnik"],
+      ["Kormoran", "Wędkarz piórowy"], ["Mewa", "Złodziej zapiekanek"], ["Jaskółka", "Zwiastun lata"],
+      ["Biedronka", "Kropeczka"], ["Mrówka", "Kulturysta w świecie insekts"], ["Pszczoła", "Producent miodu"],
+      ["Osa", "Darmowy agresor"], ["Szerszeń", "Latający potwór"], ["Komar", "Pijak krwi"],
+      ["Mucha", "Denerwujący bzyczek"], ["Motyl", "Kolorowy latawiec"], ["Ćma", "Fanatyk lampy"],
+      ["Chrząszcz", "Pancernik trawnikowy"], ["Świerszcz", "Nocny skrzypek"], ["Bąk", "Latająca beczułka"],
+      ["Dżdżownica", "Wędkarzowy przyjaciel"], ["Ślimak bez skorupy", "Goliasz"], ["Pijawka", "Wampir stawowy"],
+      ["Kleszcz", "Cichy pasażer"], ["Wsza", "Pamiątkowa ze szkoły"], ["Pchła", "Skoczek dywanowy"],
+      ["Karaluch", "Nieśmiertelny mieszkaniec"], ["Prus", "Młodszy brat karalucha"], ["Rybik cukrowy", "Szybki stworek w łazience"],
+      ["Pająk kątnik", "Straszny wielkolud w rogu"], ["Skorpion", "Kolczasty ogon"], ["Kleszcz w lesie", "Koszmar grzybiarza"],
+      ["Jeżozwierz", "Chodząca szczotka"], ["Pancernik", "Czołg ze zwierzyny"], ["Skunks", "Śmierdziel domowy"],
+      ["Szop", "Pracz śmietnikowy"], ["Leniwiec", "Mistrz powolności"], ["Kameleon", "Mistrz kamuflażu"],
+      ["Waran z Komodo", "Smok z Indonezji"], ["Kobra", "Tancerz z fletem"], ["Grzechotnik", "Wąż z grzechotką"],
+      ["Anakonda", "Wielki wąż dusiciel"], ["Żmija", "Wredna sąsiadka wąż"], ["Złoty puchar", "Cel w życiu"],
+      ["Medal z kartofla", "Nagroda pocieszenia"], ["Dyplom z painta", "Grafik płakał jak projektował"], ["Puchar polsatu", "Legendarny trofeum"],
+      ["Złota malina", "Nagroda dla najgorszych"], ["Oscar", "Złoty chłopiec z Hollywood"], ["Grammy", "Złoty gramofon"],
+      ["Nobil", "Nagroda dla kujonów"], ["Złota piłka", "Pele i spółka"], ["Puchar stanleya", "Hokejowa beczka"],
+      ["Super Bowl", "Amerykański cyrk"], ["Tour de France", "Wyścig na rowerach"], ["Igrzyska olimpijskie", "Impreza co 4 lata"],
+      ["Mistrzostwa świata", "Emocje narodowe"], ["Derby miasta", "Bitwa kibiców"], ["Sparing", "Karnel bez kartek"],
+      ["Dogrywka", "Zawał serca w 90 minucie"], ["Rzuty karne", "Loteria narodowa"], ["Czerwona kartka", "Wylot z boiska"],
+      ["Żółta kartka", "Ostrzeżenie"], ["Spalony", "Błąd taktyczny"], ["Gol w 90 minucie", "Euforia"],
+      ["Samobój", "Tragedia sportowca"], ["Orlik", "Stadion narodowy osiedla"], ["Gra w kapsle", "Hit lat 90"],
+      ["Zbijak", "Szkolne pole bitwy"], ["Dwa ognie", "Klasyk W-F-u"], ["Guma do skakania", "Dziewczyński lans"],
+      ["Klasy na chodniku", "Skakanie po cyfrach"], ["Monopoly", "Gra niszcząca przyjaźnie"], ["Scrabble", "Walka na słowniki"],
+      ["Chińczyk", "Wkurzające zbijanie"], ["Warcaby", "Proste szachy"], ["Szachy", "Ból głowy"],
+      ["Bilard", "Panowie przy stole"], ["Kręgle", "Zrzucone kręgle"], ["Darts", "Rzutki do tarczy"],
+      ["Piłkarzyki", "Kręcenie drążkiem"], ["Ping-pong", "Szybka pingielka"], ["Badminton", "Kozak na podwórku"],
+      ["Siatkówka plażowa", "Słońce i piasek"], ["Koszykówka", "Wsad do kosza"], ["Piłka nożna", "Narodowa religia"],
+      ["Skok wzwyż", "Ponad poprzeczką"], ["Skok o tyczce", "Latanie z kijem"], ["Pchnięcie kulą", "Rzut kamieniem"],
+      ["Rzut dyskiem", "Latający talerz"], ["Rzut oszczepem", "Włócznia sportowa"], ["Maraton", "Bieg bez końca"],
+      ["Sprint", "Ostatnia prosta"], ["Pływanie synchroniczne", "Balet w wodzie"], ["Skoki do wody", "Bombka z 10 metrów"],
+      ["Kajak", "Wiosłowanie w deszczu"], ["Wioślarstwo", "Siła rąk"], ["Żeglarstwo", "Wiatr w żplach"],
+      ["Windsurfing", "Deska z żaglem"], ["Kitesurfing", "Latanie na latawcu"], ["Nurkowanie", "Podwodny świat"],
+      ["Wspinaczka", "Ściana płaczu"], ["Snowboard", "Deska na śniegu"], ["Narciarstwo", "Białe szaleństwo"],
+      ["Saneczki", "Zjazd z górki"], ["Łyżwiarstwo", "Jazda na żyletkach"], ["Hokej na lodzie", "Męska bijatyka"],
+      ["Curling", "Szorowanie lodu miotłą"], ["Biathlon", "Bieg i strzelanie"], ["Skoki narciarskie", "Małyszomania"],
+      ["Formuła 1", "Szybkie bolidy"], ["Rajd WRC", "Latanie bokiem po błocie"], ["Żużel", "Czarny sport bez hamulców"]
     ];
 
     const chaosClusters = [
       { category: "Owoce", words: ["Jabłko", "Banan", "Pomarańcza", "Truskawka", "Malina", "Cytryna"], impostor: "Śrubokręt" },
       { category: "Samochody", words: ["BMW", "Audi", "Mercedes", "Volkswagen", "Toyota", "Volvo"], impostor: "Pralka" },
       { category: "Jedzenie", words: ["Pizza", "Burger", "Kebab", "Zapiekanka", "Hot-Dog", "Frytki"], impostor: "Młotek" },
-      { category: "Alkohole", words: ["Wódka", "Piwo", "Wino", "Whisky", "Gin", "Tequila"], impostor: "Szampon" }
+      { category: "Alkohole", words: ["Wódka", "Piwo", "Wino", "Whisky", "Gin", "Tequila"], impostor: "Szampon" },
+      { category: "Zawody", words: ["Lekarz", "Informatyk", "Prawnik", "Murarz", "Kucharz", "Nauczyciel"], impostor: "Dinozaur" },
+      { category: "Kolory", words: ["Czerwony", "Niebieski", "Zielony", "Żółty", "Fioletowy", "Czarny"], impostor: "Kaloryfer" }
     ];
 
     let peer = null;
@@ -326,6 +397,8 @@
       } else if (data.type === 'DECISION') {
         const p = players.find(x => x.id === conn.peer);
         if (p) p.decision = data.choice;
+        
+        broadcastProgress();
         renderTVLiveTracker();
 
         if (players.every(x => x.decision !== null)) {
@@ -338,6 +411,8 @@
       } else if (data.type === 'VOTE') {
         const p = players.find(x => x.id === conn.peer);
         if (p) p.votedFor = data.targetId;
+
+        broadcastProgress();
         renderTVLiveTracker();
 
         if (players.every(x => x.votedFor !== null)) {
@@ -345,6 +420,20 @@
           processVoteResults();
         }
       }
+    }
+
+    function broadcastProgress() {
+      let done = 0;
+      let total = players.length;
+      if (currentPhase === "DECISION") {
+        done = players.filter(x => x.decision !== null).length;
+      } else if (currentPhase === "VOTING") {
+        done = players.filter(x => x.votedFor !== null).length;
+      }
+
+      players.forEach(p => {
+        p.conn.send({ type: 'PROGRESS_UPDATE', done: done, total: total, phase: currentPhase });
+      });
     }
 
     function renderTVPlayers() {
@@ -416,6 +505,7 @@
       document.getElementById('tv-live-tracker-box').classList.remove('hidden');
       document.getElementById('tv-results-box').classList.add('hidden');
       document.getElementById('tv-timer-container').classList.add('hidden');
+      document.getElementById('tv-votes-counter-box').classList.add('hidden');
 
       updateSpeakerUI();
     }
@@ -436,12 +526,14 @@
         currentPhase = "DECISION";
         document.getElementById('tv-phase-title').innerText = "Decyzja Graczy";
         document.getElementById('tv-phase-desc').innerText = "Decydujcie: Głosowanie czy Kolejna Runda?";
+        document.getElementById('tv-votes-counter-box').classList.remove('hidden');
 
         players.forEach(p => {
           p.decision = null;
           p.conn.send({ type: 'PHASE_DECISION' });
         });
         renderTVLiveTracker();
+        broadcastProgress();
         startTimer(onDecisionTimeout);
       }
     }
@@ -450,6 +542,7 @@
       currentPhase = "VOTING";
       document.getElementById('tv-phase-title').innerText = "Głosowanie na Impostora";
       document.getElementById('tv-phase-desc').innerText = "Każdy gracz wybiera podejrzanego...";
+      document.getElementById('tv-votes-counter-box').classList.remove('hidden');
 
       const targets = players.map(p => ({ id: p.id, name: p.name }));
       players.forEach(p => {
@@ -458,6 +551,7 @@
       });
 
       renderTVLiveTracker();
+      broadcastProgress();
       startTimer(onVotingTimeout);
     }
 
@@ -492,6 +586,7 @@
         activeTimer = null;
       }
       document.getElementById('tv-timer-container').classList.add('hidden');
+      document.getElementById('tv-votes-counter-box').classList.add('hidden');
     }
 
     function onDecisionTimeout() {
@@ -534,6 +629,10 @@
       } 
       else if (currentPhase === "DECISION" || currentPhase === "VOTING") {
         document.getElementById('tv-tracker-title').innerText = currentPhase === "DECISION" ? "Decyzje Graczy" : "Głosy na Żywo";
+        
+        let doneCount = currentPhase === "DECISION" ? players.filter(x => x.decision !== null).length : players.filter(x => x.votedFor !== null).length;
+        document.getElementById('tv-votes-progress').innerText = `${doneCount} / ${players.length}`;
+
         players.forEach(p => {
           const done = currentPhase === "DECISION" ? p.decision !== null : p.votedFor !== null;
           const box = document.createElement('div');
@@ -591,7 +690,6 @@
         </div>
       `).join('');
 
-      // Wysyłamy wyniki do wszystkich telefonów
       const scoreboardData = players.map(p => ({ name: p.name, score: p.score, lastGained: p.lastGained, isImpostor: p.isImpostor }));
       players.forEach(p => {
         p.conn.send({ type: 'PHASE_ENDED', scoreboard: scoreboardData, myGained: p.lastGained });
@@ -714,6 +812,9 @@
           };
           container.appendChild(btn);
         });
+      } else if (data.type === 'PROGRESS_UPDATE') {
+        document.getElementById('phone-decision-counter').innerText = `${data.done} / ${data.total}`;
+        document.getElementById('phone-voting-counter').innerText = `${data.done} / ${data.total}`;
       } else if (data.type === 'TIMER_SYNC') {
         document.getElementById('phone-timer-decision').innerText = data.time + 's';
         document.getElementById('phone-timer-voting').innerText = data.time + 's';
@@ -741,7 +842,7 @@
       hostConn.send({ type: 'DECISION', choice: choice });
       document.getElementById('decision-buttons').innerHTML = `
         <div class="p-4 bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 font-bold text-slate-500 rounded-xl">
-          Wybór przesłany! Oczekiwanie...
+          Wybór przesłany! Oczekiwanie na resztę graczy...
         </div>
       `;
     }

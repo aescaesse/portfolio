@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Impostor Party - High Stability PeerJS</title>
+  <title>Impostor Party - iOS Optimized</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -109,7 +109,9 @@
       <h2 class="text-2xl font-black text-red-500">DOŁĄCZ DO GRY</h2>
       <input type="text" id="phone-input-name" placeholder="Twoje imię" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-center font-bold">
       <input type="text" id="phone-input-pin" maxlength="4" placeholder="4-cyfrowy PIN" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-center font-mono font-bold text-2xl uppercase">
-      <button onclick="connectAsPlayer()" class="w-full py-4 bg-red-600 font-bold rounded-2xl shadow-lg">Dołącz do Hosta</button>
+      
+      <!-- PRZYCISK Z OPTYMALIZACJĄ IOS ID -->
+      <button id="btn-join-action" onclick="connectAsPlayer()" class="w-full py-4 bg-red-600 font-bold rounded-2xl shadow-lg transition active:scale-95">Dołącz do Hosta</button>
       
       <div class="pt-3 border-t border-slate-800">
         <button onclick="forceHostOnPhone()" class="text-xs text-slate-500 underline">Stwórz Pokój (Ten telefon jako Host)</button>
@@ -161,7 +163,7 @@
   </div>
 
   <script>
-    // Dedykowany, stabilny serwer sygnałowy na porcie 443 (HTTPS) z zapasowym STUN
+    // Konfiguracja serwera sygnałowego oraz serwerów STUN
     const peerConfig = {
       host: '0.peerjs.com',
       port: 443,
@@ -493,7 +495,9 @@
       renderTVPlayers();
     }
 
-    // LOGIKA KONTROLERA (TELEFON)
+    // ==========================================================
+    // OPTYMALIZOWANA FUNKCJA ŁĄCZENIA DLA URZĄDZEŃ APPLE (IPHONE / SAFARI)
+    // ==========================================================
     function connectAsPlayer() {
       const pin = document.getElementById('phone-input-pin').value.trim();
       const name = document.getElementById('phone-input-name').value.trim() || 'Gracz';
@@ -503,6 +507,21 @@
         return;
       }
 
+      const btn = document.getElementById('btn-join-action');
+      const originalText = btn.innerText;
+      btn.innerText = "Łączenie z pokojem...";
+      btn.disabled = true;
+
+      // Zabezpieczenie czasowe dla Safari/iOS (gdy sieć blokuje zapytanie)
+      const iosTimeout = setTimeout(() => {
+        if (hostConn && !hostConn.open) {
+          btn.innerText = originalText;
+          btn.disabled = false;
+          alert('Przekroczono czas połączenia (iOS). Sprawdź czy Host jest aktywny i czy nie blokuje Cię sieć.');
+        }
+      }, 9000);
+
+      // Inicjalizacja klienta PeerJS
       peer = new Peer(peerConfig);
 
       peer.on('open', (id) => {
@@ -511,21 +530,29 @@
         hostConn = peer.connect(hostPeerId, { reliable: true });
 
         hostConn.on('open', () => {
+          clearTimeout(iosTimeout);
           hostConn.send({ type: 'JOIN', name: name });
         });
 
         hostConn.on('data', handlePlayerData);
 
         hostConn.on('error', (err) => {
-          alert('Błąd połączenia z pokoju: ' + err);
+          clearTimeout(iosTimeout);
+          btn.innerText = originalText;
+          btn.disabled = false;
+          alert('Błąd połączenia z hostem: ' + JSON.stringify(err));
         });
       });
 
       peer.on('error', (err) => {
+        clearTimeout(iosTimeout);
+        btn.innerText = originalText;
+        btn.disabled = false;
+        
         if (err.type === 'peer-unavailable') {
-          alert('Nie znaleziono pokoju o podanym PIN-ie! Upewnij się, że Pokój jest otwarty.');
+          alert('Nie znaleziono pokoju o PIN-ie ' + pin + '! Upewnij się, że Host jest włączony.');
         } else {
-          alert('Błąd połączenia: ' + err.type);
+          alert('Błąd sieciowy na urządzeniu Apple: ' + err.type);
         }
       });
     }
